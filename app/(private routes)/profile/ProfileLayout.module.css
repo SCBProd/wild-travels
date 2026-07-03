@@ -1,0 +1,46 @@
+.layoutContainer {
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px 0;
+}
+
+.innerWrapper {
+  max-width: 375px;
+  padding-right: 20px;
+  padding-left: 20px;
+  margin: 0 auto;
+}
+
+.userInfoSection {
+  margin-bottom: 40px;
+}
+
+@media screen and (max-width: 374px) {
+  .layoutContainer {
+    padding: 24px 0;
+  }
+
+  .userInfoSection {
+    margin-bottom: 24px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .innerWrapper {
+    max-width: 768px;
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .layoutContainer {
+    padding: 48px 0;
+  }
+
+  .innerWrapper {
+    max-width: 1440px;
+    padding-right: 64px;
+    padding-left: 64px;
+  }
+}
