@@ -22,7 +22,7 @@ export default function TravellerPublicProfile({
             traveller.avatarUrl ||
             'https://ac.goit.global/fullstack/react/default-avatar.jpg'
           }
-          alt={traveller.name}
+          alt={`Аватар мандрівника ${traveller.name}`}
           fill
           sizes="(max-width: 768px) 80px, 100px"
           className={styles.avatar}
