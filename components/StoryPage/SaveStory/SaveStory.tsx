@@ -18,6 +18,7 @@ export default function SaveStory({
     <section className={css.wrapper}>
       <h2 className={css.title}>Збережіть собі історію</h2>
 
+      
       <p className={css.description}>
         Вона буде доступна у вашому профілі у розділі збережене
       </p>

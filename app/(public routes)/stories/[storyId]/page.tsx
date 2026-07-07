@@ -8,7 +8,10 @@ import SaveStory from "../../../../components/StoryPage/SaveStory/SaveStory";
 import { RecommendedStories } from "../../../../components/StoryPage/RecomendedStories/RecomendedStories";
 
 import type { Story } from "../../../../types/story";
-import { getStoryById } from "../../../../lib/api/storyApi";
+import {
+  getStoryById,
+  addSavedArticle,
+} from "../../../../lib/api/storyApi";
 
 export default function StoryPage() {
   const { storyId } = useParams();
@@ -40,16 +43,21 @@ export default function StoryPage() {
     }
   }, [storyId]);
 
-  const handleSave = async () => {
-    try {
-      setSaveLoading(true);
+ const handleSave = async () => {
+  if (!story) return;
 
+  try {
+    setSaveLoading(true);
 
-      setIsSaved((prev) => !prev);
-    } finally {
-      setSaveLoading(false);
-    }
-  };
+    await addSavedArticle(story._id);
+
+    setIsSaved(true);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setSaveLoading(false);
+  }
+};
 
   if (loading) {
     return <p>Завантаження...</p>;
