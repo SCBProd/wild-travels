@@ -1,67 +1,73 @@
 "use client";
 
-import React from "react";
+import Image from "next/image";
 import styles from "./StoryCard.module.css";
 
+
+
 export type Story = {
-  id: string;
+  _id: string;
   title: string;
-  description: string;
-  coverUrl: string;
-  author: {
+  img: string;
+  rate: number;
+  ownerId: {
     name: string;
   };
-  createdAt: string;
-  savedCount: number;
 };
-
+ 
 type Props = {
   story: Story;
   isSaved?: boolean;
+  isPriority?: boolean;
   onOpen?: (id: string) => void;
   onSave?: (id: string) => void;
 };
 
-export const StoryCard: React.FC<Props> = ({
+export default function StoryCard({
   story,
   isSaved = false,
+  isPriority = false,
   onOpen,
   onSave,
-}) => {
+}: Props) {
   return (
-    <div className={styles.CC}>
-      <img
-        className={styles.cover}
-        src={story.coverUrl}
-        alt={story.title}
-      />
-
-      <div className={styles.CCDescription}>
-      <div className={styles.autorname} >        
-          <span>{story.author.name}</span>
-          <span>{story.savedCount} 💾 </span>
+    <div className={styles.card}>
+      <div className={styles.imageWrapper}>
+        <Image
+          src={story.img}
+          alt={story.title}
+          fill
+          className={styles.image}
+          priority={isPriority}
+        />
       </div>
-      
-        <div className={styles.PCard}>
-          
-        <h3 className={styles.CTitle}>{story.title.length > 120
-            ? story.title.slice(0, 120) + "..."
-            : story.title}</h3>
- 
-            </div>
+
+      <div className={styles.content}>
+        <p className={styles.meta}>
+          {story.ownerId.name}
+          <span className={styles.metaSeparator}>·</span>
+          {story.rate}
+        </p>
+
+        <h3 className={styles.title}>{story.title}</h3>
 
         <div className={styles.actions}>
           <button
-            className={styles.openBtn}
-            onClick={() => onOpen?.(story.id)}
+            className={styles.infoBtn}
+            onClick={() => onOpen?.(story._id)}
           >
-            Переглянути статтю
+            Переглянути
           </button>
 
-          
+          <button
+            className={styles.iconBtn}
+            onClick={() => onSave?.(story._id)}
+            aria-label={isSaved ? "Збережено" : "Зберегти"}
+          >
+            {isSaved ? "★" : "☆"}
           </button>
         </div>
       </div>
     </div>
   );
-};
+}
