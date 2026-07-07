@@ -12,7 +12,6 @@ export async function GET(req: NextRequest, props: any) {
 
     const apiRes = await api.get(`/users/${travellerId}`);
 
-    // Повертаємо дані фронтенду
     return NextResponse.json(apiRes.data, { status: apiRes.status });
   } catch (error: any) {
     console.error(`Proxy Error для юзера:`, error.message);
