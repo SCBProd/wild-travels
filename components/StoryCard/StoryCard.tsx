@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import styles from "./StoryCard.module.css";
 
@@ -12,7 +10,6 @@ export type Story = {
     name: string;
   };
   createdAt: string;
-  savedCount: number;
 };
 
 type Props = {
@@ -22,6 +19,13 @@ type Props = {
   onSave?: (id: string) => void;
 };
 
+const storyDateFormatter = new Intl.DateTimeFormat("uk-UA", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: "UTC",
+});
+
 export const StoryCard: React.FC<Props> = ({
   story,
   isSaved = false,
@@ -30,35 +34,30 @@ export const StoryCard: React.FC<Props> = ({
 }) => {
   return (
     <div className={styles.CC}>
-      <img
-        className={styles.cover}
-        src={story.coverUrl}
-        alt={story.title}
-      />
-
+      <img className={styles.cover} src={story.coverUrl} alt={story.title} />
       <div className={styles.CCDescription}>
-      <div className={styles.autorname} >        
+        <h3 className={styles.CTitle}>{story.title}</h3>
+        <p className={styles.description}>
+          {story.description.length > 120
+            ? `${story.description.slice(0, 120)}...`
+            : story.description}
+        </p>
+        <div className={styles.meta}>
           <span>{story.author.name}</span>
-          <span>{story.savedCount} 💾 </span>
-      </div>
-      
-        <div className={styles.PCard}>
-          
-        <h3 className={styles.CTitle}>{story.title.length > 120
-            ? story.title.slice(0, 120) + "..."
-            : story.title}</h3>
- 
-            </div>
-
+          <span>{storyDateFormatter.format(new Date(story.createdAt))}</span>
+        </div>
         <div className={styles.actions}>
           <button
             className={styles.openBtn}
             onClick={() => onOpen?.(story.id)}
           >
-            Переглянути статтю
+            Відкрити
           </button>
-
-          
+          <button
+            className={`${styles.saveBtn} ${isSaved ? styles.saved : ""}`}
+            onClick={() => onSave?.(story.id)}
+          >
+            {isSaved ? "Збережено" : "Зберегти"}
           </button>
         </div>
       </div>
