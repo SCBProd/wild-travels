@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import PageTitle from "../../UI/PageTitle/PageTitle";
+import { PageTitle } from "../../UI/PageTitle/PageTitle";
 
 import type { Story } from "../../../types/story";
 
@@ -21,11 +21,11 @@ export default function StoryDetails({ story }: Props) {
         <span>Всі статті</span>
       </Link>
 
-      <PageTitle title={story.title} />
+      <PageTitle>{story.title}</PageTitle>
 
       <ul className={css.meta}>
         <li>
-          <span>Автор:</span> {story.author.name}
+          <span>Автор:</span> {story.ownerId.name}
         </li>
         <li>
           <span>Опубліковано:</span> {story.date}

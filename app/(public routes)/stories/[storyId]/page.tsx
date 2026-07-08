@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 import StoryDetails from "../../../../components/StoryPage/StoryDetails/StoryDetails";
 import SaveStory from "../../../../components/StoryPage/SaveStory/SaveStory";
@@ -9,9 +10,12 @@ import { RecommendedStories } from "../../../../components/StoryPage/RecomendedS
 
 import type { Story } from "../../../../types/story";
 import { getStoryById } from "../../../../lib/api/storyApi";
+import { saveStory, unsaveStory } from "../../../../lib/api/clientApi";
+import { useAuthStore } from "../../../../lib/store/useAuthStore";
 
 export default function StoryPage() {
   const { storyId } = useParams();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   const [story, setStory] = useState<Story | null>(null);
   const [recommended, setRecommended] = useState<Story[]>([]);
@@ -41,11 +45,25 @@ export default function StoryPage() {
   }, [storyId]);
 
   const handleSave = async () => {
+    if (!story) return;
+
+    if (!isAuthenticated) {
+      toast.error("Увійдіть, щоб зберігати статті");
+      return;
+    }
+
+    setSaveLoading(true);
     try {
-      setSaveLoading(true);
-
-
+      if (isSaved) {
+        await unsaveStory(story._id);
+      } else {
+        await saveStory(story._id);
+      }
       setIsSaved((prev) => !prev);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Не вдалося зберегти статтю";
+      toast.error(message);
     } finally {
       setSaveLoading(false);
     }

@@ -64,17 +64,9 @@
   height: 40px;
   font-size: 14px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 6px 12px;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  border-color: var(--opacity-neutral-darkest-15);
 }
 
 .card .actions .iconBtn {

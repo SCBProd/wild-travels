@@ -5,11 +5,12 @@ export type Story = {
   article: string;
   category: string;
   date: string;
-  ownerId: string;
-  author: {
+  rate: number;
+  savedCount: number;
+  ownerId: {
+    _id: string;
     name: string;
   };
-  savedCount: number;
   isSaved: boolean;
 };
 

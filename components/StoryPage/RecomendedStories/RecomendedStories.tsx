@@ -1,8 +1,11 @@
-import css from "./RecommendedStories.module.scss";
+'use client';
 
-import { StoryCard } from "../../../components/StoryCard/StoryCard";
+import { useRouter } from 'next/navigation';
+import css from "./RecomendedStories.module.css";
 
-import type { Story } from "../../../types/story";
+import StoryCard from "@/components/UI/StoryCard/StoryCard";
+
+import type { Story } from "@/types/story";
 
 type Props = {
   stories: Story[];
@@ -11,6 +14,8 @@ type Props = {
 export const RecommendedStories = ({
   stories,
 }: Props) => {
+  const router = useRouter();
+
   if (!stories.length) {
     return null;
   }
@@ -26,6 +31,8 @@ export const RecommendedStories = ({
           <StoryCard
             key={story._id}
             story={story}
+            isSaved={story.isSaved}
+            onOpen={(id) => router.push(`/stories/${id}`)}
           />
         ))}
       </div>
