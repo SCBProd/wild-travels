@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import TravellerPublicProfile from '@/components/TravellerPage/TravellerPublicProfile/TravellerPublicProfile';
 import MessageNoStories from '@/components/MessageNoStories/MessageNoStories';
-/* Імпортуємо іменований компонент за головним UI-шляхом */
 import { PageTitle } from '@/components/UI/PageTitle/PageTitle';
 import styles from './Page.module.css';
 
