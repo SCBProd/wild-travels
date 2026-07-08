@@ -1,0 +1,307 @@
+.header {
+  width: 100%;
+  background-color: #eef8ee; /* Оновлено фон заголовка */
+  position: relative;
+  z-index: 1000;
+  overflow-x: clip;
+}
+
+.container {
+  width: 100%;
+  height: 60px;
+  margin: 0 auto;
+  padding: 0 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  z-index: 1030;
+}
+
+.logoSvg {
+  width: 124px;
+  height: 36px;
+  display: block;
+}
+
+.desktopNav {
+  display: none;
+}
+
+.headerActions,
+.guestWrapper,
+.userWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Стан відображення елементів за замовчуванням (Мобільні пристрої) */
+.tabletDesktopAuthWrapper,
+.tabletDesktopPublishWrapper {
+  display: none;
+}
+
+.burgerMobileActionOnly {
+  display: block;
+  width: 100%;
+  padding: 0 20px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
+
+.burgerMobileActionOnly a + a {
+  margin-top: 12px;
+}
+
+/* КНОПКИ */
+.btnPrimary,
+.btnInverted {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px; /* Внутрішні відступи 10px та 4px */
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 500; /* Текст Medium згідно з макетом */
+  line-height: 150%; /* Чітко 150% згідно з макетом */
+  border-radius: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+/* Зелена акцентна кнопка «Опублікувати статтю» / «Реєстрація» */
+.btnPrimary {
+  background-color: #4c9a54;
+  color: #ffffff;
+  border: none;
+}
+
+/* Інвертована кнопка «Вхід» (з налаштуваннями як у бургера) */
+.btnInverted {
+  background-color: rgba(0, 0, 0, 0.05); /* 5% від чорного */
+  border: 1px solid rgba(0, 0, 0, 0.15); /* Товщина 1px та 15% від чорного */
+  color: #1b391b;
+}
+
+.fullWidthBtn {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.burgerButton {
+  display: flex;
+  width: 32px; /* Змінено з 42px на 32px (Hug) */
+  height: 32px; /* Змінено з 42px на 32px (Hug) */
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.05
+  ); /* Чорний з 5% прозорості (Opacity/Neutral Darkest 5) */
+  border: 1px solid rgba(0, 0, 0, 0.15); /* Чорний з 15% прозорості (Color Scheme 2/Border) */
+  padding: 4px; /* Padding згідно з макетом */
+  border-radius: 8px; /* Radius/Small */
+  cursor: pointer;
+  z-index: 1030;
+  box-sizing: border-box;
+}
+
+.burgerIcon {
+  width: 24px;
+  height: 24px;
+}
+
+/* BURGER MENU */
+.burgerMenu {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: #eef8ee; /* Оновлено фон меню */
+  z-index: 1020;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.burgerMenuOpen {
+  transform: translateX(0);
+}
+
+.burgerMenuContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding-top: 60px;
+  height: calc(100dvh - 60px);
+}
+
+/* НАВІГАЦІЯ */
+.burgerNav {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 24px;
+}
+
+.burgerNav a {
+  width: 100%;
+  padding: 8px 16px;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-decoration: none;
+  color: #1b391b; /* Оновлено колір тексту */
+}
+
+.burgerNav a + a {
+  margin-top: 16px;
+}
+
+.burgerNav a:hover,
+.activeLink {
+  color: #4c9a54;
+}
+
+/* FOOTER BURGER */
+.burgerFooter {
+  width: 100%;
+  padding-bottom: 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.burgerUserProfileCentered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* PROFILE */
+.userProfileHeaderHiddenTablet {
+  display: none;
+}
+
+.avatarContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userName {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  font-weight: 400; /* Встановлено 400 Regular */
+  color: #1b391b; /* Оновлено колір тексту */
+}
+
+.avatarImg {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: #d5e5db;
+  margin: 0 8px;
+}
+
+.logoutBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* ПЛАНШЕТ (TABLET) */
+@media (min-width: 768px) {
+  .container {
+    height: 80px;
+    padding: 0 32px;
+  }
+
+  .burgerMobileActionOnly {
+    display: none;
+  }
+
+  .tabletDesktopAuthWrapper,
+  .tabletDesktopPublishWrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 1040;
+  }
+
+  .burgerMenuContent {
+    padding-top: 80px;
+    height: calc(100dvh - 80px);
+  }
+}
+
+/* ДЕСКТОП / НОУТБУК (DESKTOP) */
+@media (min-width: 1440px) {
+  .container {
+    padding: 0 64px;
+  }
+
+  .burgerButton,
+  .burgerMenu {
+    display: none !important;
+  }
+
+  .userWrapper {
+    gap: 16px;
+  }
+
+  .tabletDesktopAuthWrapper,
+  .tabletDesktopPublishWrapper {
+    display: flex;
+    z-index: auto;
+  }
+
+  .desktopNav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-left: auto;
+    margin-right: 32px;
+  }
+
+  .navLink {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: 0%;
+    text-decoration: none;
+    color: #1b391b; /* Оновлено колір тексту навігації */
+  }
+
+  .userProfileHeaderHiddenTablet {
+    display: flex;
+    align-items: center;
+  }
+}
