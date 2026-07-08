@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 
 import StoryDetails from "../../../../components/StoryPage/StoryDetails/StoryDetails";
 import SaveStory from "../../../../components/StoryPage/SaveStory/SaveStory";
-import { RecommendedStories } from "../../../../components/StoryPage/RecomendedStories/RecomendedStories";
+import { RecommendedStories } from "../../../../components/StoryPage/RecomendedStories/RecommendedStories";
 
 import type { Story } from "../../../../types/story";
 import { getStoryById } from "../../../../lib/api/storyApi";
@@ -44,8 +44,6 @@ export default function StoryPage() {
   const handleSave = async () => {
     try {
       setSaveLoading(true);
-
-
       setIsSaved((prev) => !prev);
     } finally {
       setSaveLoading(false);
@@ -57,19 +55,19 @@ export default function StoryPage() {
   }
 
   if (!story) {
-    return <p>Така історія відсутня</p>;
+    return <p>Такої історії не існує</p>;
   }
 
   return (
     <main className={styles.page}>
       <div className={`container ${styles.container}`}>
-      <StoryDetails story={story} />
-      <SaveStory
-        isSaved={isSaved}
-        isLoading={saveLoading}
-        onSave={handleSave}
-      />
-      <RecommendedStories stories={recommended} />
+        <StoryDetails story={story} />
+        <SaveStory
+          isSaved={isSaved}
+          isLoading={saveLoading}
+          onSave={handleSave}
+        />
+        <RecommendedStories stories={recommended} />
       </div>
     </main>
   );

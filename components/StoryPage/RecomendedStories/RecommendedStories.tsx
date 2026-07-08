@@ -1,6 +1,6 @@
 import StoryCard from '@/components/UI/StoryCard/StoryCard';
 import type { Story } from '@/types/story';
-import css from './RecomendedStories.module.css';
+import css from './RecommendedStories.module.css';
 
 type Props = {
   stories: Story[];

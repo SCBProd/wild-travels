@@ -150,4 +150,9 @@
     font-size: 20px;
     min-height: 84px;
   }
+
+  .iconBtn {
+    width: 48px;
+    height: 48px;
+  }
 }
