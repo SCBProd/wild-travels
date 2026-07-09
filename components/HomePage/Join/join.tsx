@@ -6,7 +6,7 @@ import styles from './Join.module.css';
 
 export default function Join() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const linkHref = isAuthenticated ? '/auth/profile' : '/auth/register';
+  const linkHref = isAuthenticated ? '/profile' : '/register';
   const linkText = isAuthenticated ? 'Збережені статті' : 'Зареєструватися';
 
   return (

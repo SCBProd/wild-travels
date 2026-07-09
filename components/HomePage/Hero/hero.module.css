@@ -3,9 +3,9 @@
     flex-direction: column-reverse;
     gap: 24px;
 
-    padding: 24px 16px;
+    padding: 63px 20px;
 
-    background: #edf2ec;
+    background-color: #eef8ee;
 }
 
 .image {
@@ -15,10 +15,10 @@
 }
 
 .title {
-    font-size: 40px;
+    font-size: 32px;
     font-weight: 700;
     line-height: 1.1;
-    color: #1f3b21;
+    color: #1b391b;
 }
 
 .description {
@@ -43,11 +43,11 @@
 @media screen and (min-width: 768px) {
     .hero {
         /* flex-direction: column; */
-        padding: 48px 24px;
+        padding: 64px 32px;
     }
 
     .title {
-        font-size: 56px;
+        font-size: 40px;
     }
 }
 
@@ -57,7 +57,7 @@
         align-items: center;
         justify-content: space-between;
 
-        padding: 64px 80px;
+        padding: 64px 72px;
     }
 
     .content {
@@ -66,5 +66,9 @@
 
     .image {
         max-width: 640px;
+    }
+
+    .title {
+        font-size: 56px;
     }
 }

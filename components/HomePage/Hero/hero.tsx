@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import PageTitle from '../PageTitle/PageTitle';
+import { PageTitle } from '@/components/UI/PageTitle/PageTitle';
 
 import styles from './Hero.module.css';
 
@@ -11,7 +11,9 @@ export default function Hero() {
   return (
     <section className={styles.hero}>
       <div className={styles.container}>
-        <PageTitle>Відкрий Україну заново — еко-мандри для натхнення</PageTitle>
+        <PageTitle tag="h1" className={styles.title}>
+          Відкрий Україну заново — еко-мандри для натхнення
+        </PageTitle>
 
         <p className={styles.description}>
           Подорожуй екологічно, відкривай заповідні місця, гори та річки
