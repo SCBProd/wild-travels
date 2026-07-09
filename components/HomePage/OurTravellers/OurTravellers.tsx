@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Grid, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { SwiperOptions } from 'swiper/types';
@@ -11,8 +11,9 @@ import { toast } from 'react-hot-toast';
 import { getTravellers } from '@/lib/api/clientApi';
 import type { Traveller } from '@/types/traveller';
 
-import { CustomLink } from '@/components/UI/Link/Link';
+import { Button } from '@/components/UI/buttons/btn';
 import { PageTitle } from '@/components/UI/PageTitle/PageTitle';
+import TravellerCard from '@/components/UI/TravellerCard/TravellerCard';
 import LoaderComponent from '@/components/Loader/Loader';
 
 import 'swiper/css';
@@ -58,6 +59,7 @@ const swiperOptions = {
 } as SwiperOptions;
 
 export default function OurTravellers() {
+  const router = useRouter();
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['our-travellers'],
     queryFn: () => getTravellers(1),
@@ -86,45 +88,21 @@ export default function OurTravellers() {
             Наші Мандрівники
           </PageTitle>
 
-          <CustomLink
-            href="/travellers"
-            variant="button"
+          <Button
+            type="button"
+            variant="primary"
             className={styles.desktopLink}
+            onClick={() => router.push('/travellers')}
           >
             Всі мандрівники
-          </CustomLink>
+          </Button>
         </div>
 
         <div className={styles.sliderWrap}>
           <Swiper {...swiperOptions} className={styles.slider}>
             {travellers.map((traveller: Traveller) => (
               <SwiperSlide key={traveller._id} className={styles.slide}>
-                <article className={styles.card}>
-                  <div className={styles.avatarWrap}>
-                    <Image
-                      src={traveller.avatarUrl}
-                      alt={traveller.name}
-                      fill
-                      unoptimized
-                      className={styles.avatar}
-                    />
-                  </div>
-
-                  <div className={styles.textBlock}>
-                  <h3 className={styles.cardTitle}>{traveller.name}</h3>
-                  <p className={styles.meta}>
-                    Статей: {traveller.articlesAmount}
-                  </p>
-                  </div>
-
-                  <CustomLink
-                    href={`/travellers/${traveller._id}`}
-                    variant="secondary"
-                    className={styles.profileLink}
-                  >
-                    Переглянути профіль
-                  </CustomLink>
-                </article>
+                <TravellerCard traveller={traveller} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -132,30 +110,33 @@ export default function OurTravellers() {
 
         <div className={styles.bottomRow}>
           <div className={styles.nav}>
-            <button
+            <Button
               type="button"
+              variant="secondary"
               className={`${styles.navBtn} our-travellers-prev`}
               aria-label="Попередні мандрівники"
             >
               ←
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
+              variant="secondary"
               className={`${styles.navBtn} our-travellers-next`}
               aria-label="Наступні мандрівники"
             >
               →
-            </button>
+            </Button>
           </div>
 
-          <CustomLink
-            href="/travellers"
-            variant="button"
+          <Button
+            type="button"
+            variant="primary"
             className={styles.mobileLink}
+            onClick={() => router.push('/travellers')}
           >
             Всі мандрівники
-          </CustomLink>
+          </Button>
         </div>
       </div>
     </section>
