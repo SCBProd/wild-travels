@@ -1,23 +1,42 @@
-import Link from 'next/link';
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/buttons/btn';
 import styles from './MessageNoStories.module.css';
 
 interface MessageNoStoriesProps {
   text: string;
   buttonText: string;
-  linkTo: string;
+  linkTo?: string;
+  onAction?: () => void;
 }
 
 export default function MessageNoStories({
   text,
   buttonText,
   linkTo,
+  onAction,
 }: MessageNoStoriesProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (onAction) {
+      onAction();
+      return;
+    }
+
+    if (linkTo) {
+      router.push(linkTo);
+    }
+  };
+
   return (
     <div className={styles.wrapper}>
       <p className={styles.text}>{text}</p>
-      <Link href={linkTo} className={styles.button}>
+
+      <Button variant="primary" className={styles.button} onClick={handleClick}>
         {buttonText}
-      </Link>
+      </Button>
     </div>
   );
 }

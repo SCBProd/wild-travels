@@ -1,26 +1,44 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { Button } from "@/components/UI/buttons/btn";
-import SaveStoryButton from "@/components/UI/SaveStoryButton/SaveStoryButton";
-import type { Story } from "@/types/story";
-import styles from "./StoryCard.module.css";
+import Image from 'next/image';
+import Link from 'next/link';
+import type { Story } from '@/types/story';
+import styles from './StoryCard.module.css';
 
 type Props = {
   story: Story;
   isSaved?: boolean;
   isPriority?: boolean;
-  onOpen?: (id: string) => void;
+  onSave?: (id: string) => void;
 };
+
+function getMetaPrimary(story: Story) {
+  if (story.author?.name) {
+    return story.author.name;
+  }
+
+  if (typeof story.ownerId === 'object' && story.ownerId?.name) {
+    return story.ownerId.name;
+  }
+
+  if (typeof story.category === 'object') {
+    return story.category.category;
+  }
+
+  return story.category;
+}
 
 export default function StoryCard({
   story,
   isSaved = false,
   isPriority = false,
-  onOpen,
+  onSave,
 }: Props) {
+  const metaPrimary = getMetaPrimary(story);
+  const saveLabel = isSaved ? 'Збережено' : 'Зберегти';
+
   return (
-    <div className={styles.card}>
+    <article className={styles.card}>
       <div className={styles.imageWrapper}>
         <Image
           src={story.img}
@@ -28,35 +46,47 @@ export default function StoryCard({
           fill
           className={styles.image}
           priority={isPriority}
+          sizes="(min-width: 1200px) 33vw, (min-width: 768px) 50vw, 100vw"
         />
       </div>
 
       <div className={styles.content}>
         <p className={styles.meta}>
-          {story.ownerId.name}
-          <span className={styles.metaSeparator}>·</span>
-          {story.rate}
+          <span className={styles.name}>{metaPrimary}</span>
+          <span className={styles.metaSeparator}>•</span>
+          <span className={styles.savedMeta}>
+            {story.savedCount}
+            <svg
+              className={styles.savedMetaIcon}
+              width="16"
+              height="16"
+              aria-hidden="true"
+            >
+              <use href="/Icons/icons.svg#icon-bookmark" />
+            </svg>
+          </span>
         </p>
 
         <h3 className={styles.title}>{story.title}</h3>
 
         <div className={styles.actions}>
-          <Button
-            type="button"
-            variant="secondary"
-            className={styles.infoBtn}
-            onClick={() => onOpen?.(story._id)}
-          >
+          <Link href={`/stories/${story._id}`} className={styles.infoBtn}>
             Переглянути статтю
-          </Button>
+          </Link>
 
-          <SaveStoryButton
-            storyId={story._id}
-            isSaved={isSaved}
-            className={styles.iconBtn}
-          />
+          <button
+            type="button"
+            className={`${styles.iconBtn} ${isSaved ? styles.iconBtnActive : ''}`}
+            onClick={() => onSave?.(story._id)}
+            aria-label={saveLabel}
+            title={saveLabel}
+          >
+            <svg width="20" height="20" aria-hidden="true">
+              <use href="/Icons/icons.svg#icon-bookmark" />
+            </svg>
+          </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

@@ -6,12 +6,13 @@ import { toast } from "react-hot-toast";
 
 import StoryDetails from "../../../../components/StoryPage/StoryDetails/StoryDetails";
 import SaveStory from "../../../../components/StoryPage/SaveStory/SaveStory";
-import { RecommendedStories } from "../../../../components/StoryPage/RecomendedStories/RecomendedStories";
+import { RecommendedStories } from "../../../../components/StoryPage/RecomendedStories/RecommendedStories";
 
 import type { Story } from "../../../../types/story";
 import { getStoryById } from "../../../../lib/api/storyApi";
 import { saveStory, unsaveStory } from "../../../../lib/api/clientApi";
 import { useAuthStore } from "../../../../lib/store/useAuthStore";
+import styles from "./page.module.css";
 
 export default function StoryPage() {
   const { storyId } = useParams();
@@ -31,7 +32,7 @@ export default function StoryPage() {
 
         setStory(data.story);
         setRecommended(data.recommendedStories);
-        setIsSaved(data.story.isSaved);
+        setIsSaved(data.story.isSaved ?? false);
       } catch {
         setStory(null);
       } finally {
@@ -74,18 +75,20 @@ export default function StoryPage() {
   }
 
   if (!story) {
-    return <p>Така історія відсутня</p>;
+    return <p>Такої історії не існує</p>;
   }
 
   return (
-    <main>
-      <StoryDetails story={story} />
-      <SaveStory
-        isSaved={isSaved}
-        isLoading={saveLoading}
-        onSave={handleSave}
-      />
-      <RecommendedStories stories={recommended} />
+    <main className={styles.page}>
+      <div className={`container ${styles.container}`}>
+        <StoryDetails story={story} />
+        <SaveStory
+          isSaved={isSaved}
+          isLoading={saveLoading}
+          onSave={handleSave}
+        />
+        <RecommendedStories stories={recommended} />
+      </div>
     </main>
   );
 }

@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { SwiperOptions } from 'swiper/types';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 
-import { getPopularStories } from '@/lib/api/clientApi';
+import { getPopularStories, saveStory, unsaveStory } from '@/lib/api/clientApi';
+import { useAuthStore } from '@/lib/store/useAuthStore';
 import StoryCard from '@/components/UI/StoryCard/StoryCard';
 
 import { CustomLink } from '@/components/UI/Link/Link';
@@ -45,7 +45,10 @@ const swiperOptions = {
 } as SwiperOptions;
 
 export default function PopularStories() {
-  const router = useRouter();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const [savedOverrides, setSavedOverrides] = useState<
+    Record<string, boolean>
+  >({});
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['popular-stories'],
@@ -62,6 +65,33 @@ export default function PopularStories() {
       toast.error(message);
     }
   }, [isError, error]);
+
+  const isStorySaved = (storyId: string, defaultSaved: boolean) =>
+    savedOverrides[storyId] ?? defaultSaved;
+
+  const handleSave = async (storyId: string) => {
+    if (!isAuthenticated) {
+      toast.error('Увійдіть, щоб зберігати статті');
+      return;
+    }
+
+    const story = data?.data.find((item) => item._id === storyId);
+    const isSaved = isStorySaved(storyId, story?.isSaved ?? false);
+
+    try {
+      if (isSaved) {
+        await unsaveStory(storyId);
+      } else {
+        await saveStory(storyId);
+      }
+
+      setSavedOverrides((prev) => ({ ...prev, [storyId]: !isSaved }));
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Не вдалося зберегти статтю';
+      toast.error(message);
+    }
+  };
 
   if (isLoading) return <LoaderComponent />;
 
@@ -93,7 +123,8 @@ export default function PopularStories() {
                 <StoryCard
                   story={story}
                   isPriority={index === 0}
-                  onOpen={(id) => router.push(`/stories/${id}`)}
+                  isSaved={isStorySaved(story._id, story.isSaved)}
+                  onSave={handleSave}
                 />
               </SwiperSlide>
             ))}

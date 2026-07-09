@@ -21,11 +21,7 @@ export function Button(props: Props) {
     ...rest
   } = props;
 
-  const classes = [
-    styles.button,
-    styles[variant],
-    className ?? ''
-  ]
+  const classes = [styles.button, styles[variant], className ?? '']
     .join(' ')
     .trim();
 
@@ -42,4 +38,3 @@ export function Button(props: Props) {
     </button>
   );
 }
-

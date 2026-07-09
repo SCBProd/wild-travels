@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/UI/buttons/btn';
+import { Button } from '@/components/ui/buttons/btn';
 
 type Props = {
   error: Error & { digest?: string };

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Button } from '@/components/UI/buttons/btn';
+import { Button } from '@/components/ui/buttons/btn';
 import { Icon } from '@/components/UI/Icon/Icon';
 import { useAuthStore } from '@/lib/store/useAuthStore';
 import { saveStory, unsaveStory } from '@/lib/api/clientApi';
