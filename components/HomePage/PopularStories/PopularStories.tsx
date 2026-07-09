@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { SwiperOptions } from 'swiper/types';
@@ -11,7 +12,7 @@ import { getPopularStories, saveStory, unsaveStory } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/useAuthStore';
 import StoryCard from '@/components/UI/StoryCard/StoryCard';
 
-import { CustomLink } from '@/components/UI/Link/Link';
+import { Button } from '@/components/UI/buttons/btn';
 import { PageTitle } from '@/components/UI/PageTitle/PageTitle';
 import LoaderComponent from '@/components/Loader/Loader';
 
@@ -45,6 +46,7 @@ const swiperOptions = {
 } as SwiperOptions;
 
 export default function PopularStories() {
+  const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [savedOverrides, setSavedOverrides] = useState<
     Record<string, boolean>
@@ -107,13 +109,14 @@ export default function PopularStories() {
             Популярні статті
           </PageTitle>
 
-          <CustomLink
-            href="/stories"
-            variant="button"
+          <Button
+            type="button"
+            variant="primary"
             className={styles.desktopLink}
+            onClick={() => router.push('/stories')}
           >
             Всі статті
-          </CustomLink>
+          </Button>
         </div>
 
         <div className={styles.sliderWrap}>
@@ -133,30 +136,33 @@ export default function PopularStories() {
 
         <div className={styles.bottomRow}>
           <div className={styles.nav}>
-            <button
+            <Button
               type="button"
+              variant="secondary"
               className={`${styles.navBtn} popular-stories-prev`}
               aria-label="Попередні статті"
             >
               ←
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
+              variant="secondary"
               className={`${styles.navBtn} popular-stories-next`}
               aria-label="Наступні статті"
             >
               →
-            </button>
+            </Button>
           </div>
 
-          <CustomLink
-            href="/stories"
-            variant="button"
+          <Button
+            type="button"
+            variant="primary"
             className={styles.mobileLink}
+            onClick={() => router.push('/stories')}
           >
             Всі статті
-          </CustomLink>
+          </Button>
         </div>
       </div>
     </section>
