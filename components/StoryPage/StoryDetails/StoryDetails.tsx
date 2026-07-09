@@ -18,16 +18,6 @@ export default function StoryDetails({ story }: Props) {
 
   return (
     <article className={css.article}>
-      <div className={css.imageWrap}>
-        <Image
-          src={story.img}
-          alt={story.title}
-          width={1200}
-          height={720}
-          className={css.image}
-          priority
-        />
-      </div>
 
       <Link href="/stories" className={css.backLink}>
         <svg width="20" height="20" aria-hidden="true">
@@ -50,6 +40,17 @@ export default function StoryDetails({ story }: Props) {
       </ul>
 
       <div className={css.categoryBadge}>{categoryName}</div>
+
+          <div className={css.imageWrap}>
+        <Image
+          src={story.img}
+          alt={story.title}
+          width={1200}
+          height={720}
+          className={css.image}
+          priority
+        />
+      </div>
 
     <div className={css.content}>
   {(story.article ?? "")

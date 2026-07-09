@@ -11,6 +11,7 @@ export const RecommendedStories = ({ stories }: Props) => {
     return null;
   }
 
+
   return (
     <section className={css.section}>
       <h2 className={css.title}>Вам також сподобається</h2>

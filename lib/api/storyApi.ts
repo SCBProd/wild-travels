@@ -1,4 +1,6 @@
 import { nextServer } from "./api";
+import axios from "axios";
+
 import type {
   CategoriesResponse,
   Story,
@@ -125,18 +127,77 @@ export const getStories = async ({
 };
 
 export const getCategories = async (): Promise<CategoriesResponse> => {
-  const response =
-    await nextServer.get<CategoriesResponse>(
-      "/api/categories"
-    );
+  const response = await nextServer.get(
+    "/api/categories"
+  );
 
   return response.data;
 };
 
+
 export const getStoryById = async (id: string) => {
-  const response = await nextServer.get(`/stories/${id}`);
+  const response = await axios.get(
+    `https://wild-travels-backend.onrender.com/api/stories/${id}`
+  );
 
-  console.log("FROM API:", response.data);
 
-  return response.data;
+  console.log("FULL STORY RESPONSE:", response.data);
+
+
+  const story = response.data.story ?? response.data;
+
+
+  const [enrichedStory] = await enrichStoriesWithOwners([
+    story,
+  ]);
+
+
+  const categoriesResponse = await getCategories();
+
+
+  const categoryId =
+    typeof enrichedStory.category === "string"
+      ? enrichedStory.category
+      : enrichedStory.category._id;
+
+
+  const category = categoriesResponse.data.find(
+    (item) => item._id === categoryId
+  );
+
+
+  return {
+    ...response.data,
+
+    story: {
+      ...enrichedStory,
+
+      category:
+        category ?? enrichedStory.category,
+    },
+  };
+};
+
+export const getRecommendedStories = async (
+  story: Story
+): Promise<Story[]> => {
+
+  const categoryId =
+    typeof story.category === "string"
+      ? story.category
+      : story.category._id;
+
+
+  const response = await getStories({
+    pageParam: 1,
+    perPage: 4,
+    category: categoryId,
+  });
+
+
+  return response.data
+    .filter(
+      (item) => item._id !== story._id
+    )
+    .slice(0, 3);
 };

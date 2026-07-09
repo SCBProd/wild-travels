@@ -8,7 +8,10 @@ import SaveStory from "../../../../components/StoryPage/SaveStory/SaveStory";
 import { RecommendedStories } from "../../../../components/StoryPage/RecomendedStories/RecommendedStories";
 
 import type { Story } from "../../../../types/story";
-import { getStoryById } from "../../../../lib/api/storyApi";
+import {
+  getStoryById,
+  getRecommendedStories,
+} from "../../../../lib/api/storyApi";
 import styles from "./page.module.css";
 
 export default function StoryPage() {
@@ -23,38 +26,49 @@ const storyId = params.storyId;
   const [isSaved, setIsSaved] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
 
- useEffect(() => {
- const loadStory = async () => {
-  try {
-    setLoading(true);
+useEffect(() => {
+  const loadStory = async () => {
+    try {
+      setLoading(true);
 
-    const data = await getStoryById(storyId);
-
-console.log("FULL STORY DATA:", JSON.stringify(data, null, 2));
+      console.log("storyId =", storyId);
 
 
-    const storyData = data.story ?? data;
+      const data = await getStoryById(storyId);
 
-    setStory(storyData);
 
-    setRecommended(
-      data.recommendedStories ?? []
-    );
+      console.log("PAGE DATA:", data);
 
-    setIsSaved(
-      storyData.isSaved ?? false
-    );
 
-  } catch (error) {
-    console.error(error);
-  } finally {
-    setLoading(false);
-  }
-};
+      const storyData = data.story ?? data;
+
+
+      setStory(storyData);
+
+
+     const recommendedStories =
+       await getRecommendedStories(storyData);
+
+
+       setRecommended( recommendedStories);
+
+      setIsSaved(
+        storyData.isSaved ?? false
+      );
+
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   if (storyId) {
     loadStory();
   }
+
 }, [storyId]);
 
   const handleSave = async () => {
