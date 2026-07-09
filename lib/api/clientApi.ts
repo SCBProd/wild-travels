@@ -65,3 +65,7 @@ export async function userRegister(data: RegisterRequest) {
 export const logout = async (): Promise<void> => {
   await nextServer.post('/api/auth/logout');
 };
+
+
+
+

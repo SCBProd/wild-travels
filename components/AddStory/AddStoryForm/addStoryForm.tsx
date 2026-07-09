@@ -1,0 +1,269 @@
+'use client'
+
+import { Field, Formik, Form, FormikHelpers, ErrorMessage } from "formik"
+import Image from "next/image"
+import { useEffect, useId, useState, } from "react"
+import css from './addStoryForm.module.css'
+
+import Select from "react-select"
+import { selectStyles, type CategoryOption } from "./selectStyles"
+import * as Yup from "yup"
+
+type OrderFormValues = {
+    file: File | undefined;
+    title: string;
+    category: string;
+    message: string
+}
+
+type CategoryItem = {
+    _id: string;
+    category: string;
+}
+
+const initialValues: OrderFormValues  = {
+    file: undefined,
+    title: "",
+    category: "Категорія",
+    message: "",
+}
+
+const validationSchema = Yup.object().shape({
+    file: Yup.mixed<File>().required("Оберіть файл"),
+    title: Yup.string()
+        .min(2, "Мінімум 2 символи")
+        .max(40, "Максимум 40 символів")
+        .required("Введіть заголовок"),
+    category: Yup.string()
+        .required("Обери категорію")
+        .notOneOf(["Категорія"], "Обери категорію"),
+    message: Yup.string()
+        .min(12, "Мінімум 12 символів")
+        .max(3000, "Максимум 3000 символів")
+        .required("Залиши опис")    
+})
+
+const AddStoryForm = () => {
+    const [categories, setCategories] = useState<string[]>([])
+    const [preview, setPreview] = useState<string | undefined>(undefined)
+    const [placeholderSrc, setPlaceholderSrc] = useState('/Placeholder-mobile1x.webp')
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const fieldId = useId()
+
+    useEffect(() => {
+        let isMounted = true
+
+        const fetchCategories = async () => {
+            try {
+                const data = await ()
+                if (isMounted) {
+                    const apiItems =
+                        Array.isArray(data)
+                            ? data
+                            : (typeof data === 'object' && data !== null && 'data' in data && Array.isArray(data.data)
+                                ? data.data
+                                : [])
+
+                    const normalizedCategories = (apiItems as CategoryItem[])
+                        .map((item) => item?.category)
+                        .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+
+                    setCategories(normalizedCategories)
+                }
+            } catch (error) {
+                console.error("Failed to load categories", error)
+            }
+        }
+
+        void fetchCategories()
+
+        const updatePlaceholder = () => {
+            const isRetina = window.devicePixelRatio >= 2
+            const width = window.innerWidth
+
+            if (width >= 1440) {
+                setPlaceholderSrc(isRetina ? '/Placeholder-desktop2x.webp' : '/Placeholder-desktop1x.webp')
+                return
+            }
+
+            if (width >= 768) {
+                setPlaceholderSrc(isRetina ? '/Placeholder-tablet2x.webp' : '/Placeholder-tablet1x.webp')
+                return
+            }
+
+            setPlaceholderSrc(isRetina ? '/Placeholder-mobile2x.webp' : '/Placeholder-mobile1x.webp')
+        }
+
+        updatePlaceholder()
+        window.addEventListener('resize', updatePlaceholder)
+
+        return () => {
+            isMounted = false
+            window.removeEventListener('resize', updatePlaceholder)
+        }
+    }, [])
+
+    const handleSubmit = (
+        values: OrderFormValues,
+        actions: FormikHelpers<OrderFormValues>) => {
+        actions.resetForm()
+        setPreview(undefined)
+    }
+
+    const options: CategoryOption[] = categories.map((category) => ({
+        value: category,
+        label: category,
+    }))
+
+    return(
+        
+        <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            validateOnMount
+            onSubmit={handleSubmit}
+        >
+            {({ values, errors, submitCount, isValid, dirty, setFieldValue, resetForm }) => {
+            const isSubmitted = submitCount > 0
+            const titleHasRequiredError =
+                isSubmitted && Boolean(errors.title) && values.title.trim().length === 0
+            const messageHasRequiredError =
+                isSubmitted && Boolean(errors.message) && values.message.trim().length === 0
+            const categoryHasRequiredError =
+                isSubmitted
+                && Boolean(errors.category)
+                && (values.category.trim().length === 0 || values.category === "Категорія")
+                
+            const isFormReady = isValid && dirty
+
+            const handleCancel = () => {
+                resetForm()
+                setPreview(undefined)
+                setIsMenuOpen(false)
+            }
+
+            return (
+            <Form className={css.form}>
+                <div className={css.imageWrap}>
+                    <Image
+                        src={preview || placeholderSrc}
+                        alt="Фото Історії"
+                        loading="eager"
+                        fill
+                        sizes="(min-width: 1440px) 1091px, (min-width: 768px) 704px, 335px"
+                        style={{ objectFit: 'cover' }}
+                    />
+                </div>
+
+                <label htmlFor={`${fieldId}-file`} className={css.uploadLabel}>
+                    Завантажити фото
+                </label>
+
+                <Field name="file">
+                    {() => (
+                        <input
+                            id={`${fieldId}-file`}
+                            type="file"
+                            name="file"
+                            className={css.fileInput}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                const file = e.currentTarget.files?.[0]
+                                setFieldValue("file", file)
+                                if (file) {
+                                    setPreview(URL.createObjectURL(file))
+                                }
+                            }}
+                        />
+                    )}
+                </Field>
+
+                <ErrorMessage
+                    name="file"
+                    component="span"
+                    className={css.error}/>
+
+                <label htmlFor={`${fieldId}-title`} className={css.label}>
+                    Загаловок 
+                    <Field
+                        id={`${fieldId}-title`}
+                        type="text"
+                        name="title"
+                        className={`${css.placeholder} ${css.input} ${titleHasRequiredError ? css.inputError : ""}`}
+                        placeholder="Введіть заголовок історії"
+                    />
+
+                    <ErrorMessage
+                        name="title"
+                        component="span"
+                        className={css.error}/>
+
+                </label>
+
+                <label htmlFor={`${fieldId}-category`} className={css.label}>
+                    Категорія
+                    <Select
+                        className={`${css.categorySelect} ${css.placeholder} ${categoryHasRequiredError ? css.categoryError : ""}`}
+                        classNamePrefix="category-select"
+                        styles={selectStyles}
+                        instanceId={`${fieldId}-category-select`}
+                        aria-invalid={categoryHasRequiredError}
+                        menuIsOpen={isMenuOpen}
+                        onMenuOpen={() => setIsMenuOpen(true)}
+                        onMenuClose={() => setIsMenuOpen(false)}
+                        maxMenuHeight={9999}
+                        menuPlacement="bottom"
+                        menuPosition="absolute"
+                        menuShouldScrollIntoView={false}
+                        inputId={`${fieldId}-category`}
+                        name="category"
+                        options={options}
+                        placeholder="Оберіть категорію"
+                        value={options.find(
+                            (option) => option.value === values.category
+                        ) || null}
+                        onChange={(option) =>
+                            setFieldValue("category", option?.value ?? "")
+                        }
+                    />
+                    <ErrorMessage
+                        name="category"
+                        component="span"
+                        className={css.error}/>
+
+                </label>
+
+                <label htmlFor="message"className={css.label}>
+                    Текст історії
+                    <Field
+                        id="message"
+                        as="textarea"
+                        name="message"
+                        rows={5}
+                        className={`${css.placeholder} ${css.input} ${css.textarea} ${messageHasRequiredError ? css.inputError : ""}`}
+                        placeholder="Ваша історія тут"
+                    />
+
+                    <ErrorMessage
+                        name="message"
+                        component="span"
+                        className={`${css.error}`}/>
+                </label>
+
+                <div className={css.buttonContainer}>
+                    <button
+                        type="submit"
+                        className={isFormReady ? css.normalButton : css.buttonDisabled}
+                        
+                    >
+                        Зберегти
+                    </button>
+                    <button type="button" className={css.buttonCancel} onClick={handleCancel}>Відмінити</button>
+                </div>
+
+            </Form>
+            )}}
+        </Formik>
+    )
+}
+
+export default AddStoryForm

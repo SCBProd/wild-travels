@@ -51,7 +51,9 @@ export default function RootLayout({
           <QueryProvider>
             <ToasterProvider />
             <AppLayout>
-              <AuthProvider>{children}</AuthProvider>
+              <AuthProvider>
+                <main>{children}</main>
+                </AuthProvider>
             </AppLayout>
           </QueryProvider>
         </ThemeProvider>
