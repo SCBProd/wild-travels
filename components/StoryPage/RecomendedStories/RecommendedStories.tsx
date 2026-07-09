@@ -14,7 +14,7 @@ export const RecommendedStories = ({ stories }: Props) => {
 
   return (
     <section className={css.section}>
-      <PageTitle tag="h2">
+      <PageTitle tag="h2" className={css.title}>
         Вам також сподобається
       </PageTitle>
 
