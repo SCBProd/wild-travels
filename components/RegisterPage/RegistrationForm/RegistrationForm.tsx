@@ -42,11 +42,11 @@ export default function RegistrationForm() {
     { setSubmitting }: FormikHelpers<UserRegister>,
   ) => {
     try {
-      await userRegister(values);
+      const user = await userRegister(values);
 
       toast.success('Реєстрація успішна');
 
-      // setUser(user);
+      setUser(user);
 
       router.push('/');
     } catch (error) {

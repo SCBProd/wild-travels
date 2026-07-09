@@ -29,11 +29,11 @@ export default function LoginForm() {
     { setSubmitting }: FormikHelpers<UserLogin>,
   ) => {
     try {
-      await userLogin(values);
+      const user = await userLogin(values);
 
       toast.success('Успішний вхід');
 
-      // setUser(user);
+      setUser(user);
 
       router.push('/');
     } catch (error) {
