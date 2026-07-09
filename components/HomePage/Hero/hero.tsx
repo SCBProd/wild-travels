@@ -3,60 +3,57 @@ import Link from 'next/link';
 
 import PageTitle from '../PageTitle/PageTitle';
 
-import css from './Hero.module.css';
+import styles from './Hero.module.css';
 
-import heroMobile from '@/public/Image/hero-mob.jpg';
-import heroTablet from '@/public/Image/hero-tab.jpg';
-import heroDesktop from '@/public/Image/hero-desk.jpg';
+import heroImg from '@/public/Image/hero-mob.webp';
 
 export default function Hero() {
   return (
-    <section className={css.hero}>
-      <div className={css.content}>
+    <section className={styles.hero}>
+      <div className={styles.container}>
         <PageTitle>Відкрий Україну заново — еко-мандри для натхнення</PageTitle>
 
-        <p className={css.description}>
+        <p className={styles.description}>
           Подорожуй екологічно, відкривай заповідні місця, гори та річки
           України.
         </p>
 
-        <Link href="#join" className={css.button}>
+        <Link href="#join" className={styles.button}>
           Доєднатись до мандрів
         </Link>
       </div>
 
-      <div className={css.imageWrapper}>
+      <div className={styles.imageWrapper}>
         <picture>
           <source
             media="(min-width: 1440px)"
             srcSet="
-              /Image/hero-desk.jpg 1x,
-              /Image/hero-desk@2x.jpg 2x
+              /Image/hero-desk.webp 1x,
+              /Image/hero-desk@2x.webp 2x
             "
           />
 
           <source
             media="(min-width: 768px)"
             srcSet="
-              /Image/hero-tab.jpg 1x,
-              /Image/hero-tab@2x.jpg 2x
+              /Image/hero-tab.webp 1x,
+              /Image/hero-tab@2x.webp 2x
             "
           />
 
           <source
             media="(min-width: 375px)"
             srcSet="
-              /Image/hero-mob.jpg 1x,
-              /Image/hero-mob@2x.jpg 2x
+              /Image/hero-mob.webp 1x,
+              /Image/hero-mob@2x.webp 2x
             "
           />
 
           <Image
-            src={heroMobile}
+            src={heroImg}
             alt="Карпатські гори"
             priority
-            className={css.image}
-            width="100"
+            className={styles.image}
           />
         </picture>
       </div>
