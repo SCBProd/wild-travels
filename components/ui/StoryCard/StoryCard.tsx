@@ -34,7 +34,7 @@ export default function StoryCard({
   onSave,
 }: Props) {
   const metaPrimary = getMetaPrimary(story);
-  const saveLabel = story.isSaved ? "Збережено" : "Зберегти";
+
 
   return (
     <article className={styles.card}>

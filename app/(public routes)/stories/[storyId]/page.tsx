@@ -84,6 +84,14 @@ export default function StoryPage() {
 
       if (!current) return;
 
+      console.log("Recommended story:", current);
+      console.log({
+  id: current?._id,
+  title: current?.title,
+  isSaved: current?.isSaved,
+      });
+      
+
       if (current.isSaved) {
         await removeSavedArticle(id);
 
@@ -107,10 +115,33 @@ export default function StoryPage() {
             : item
         )
       );
-    } catch (error) {
-      console.error(error);
-      toast.error("Помилка збереження");
-    }
+} catch (error) {
+  const err = error as AxiosError<{ error: string }>;
+
+  if (err.response?.status === 409) {
+    toast.success("Історія вже збережена");
+
+    setRecommended((prev) =>
+      prev.map((item) =>
+        item._id === id
+          ? {
+              ...item,
+              isSaved: true,
+            }
+          : item
+      )
+    );
+
+    return;
+  }
+
+  console.error(error);
+
+  toast.error(
+    err.response?.data?.error ??
+      "Помилка збереження"
+  );
+}
   };
 
   const handleSave = async () => {
@@ -157,21 +188,37 @@ export default function StoryPage() {
 
         toast.success("Історію збережено");
       }
-    } catch (error) {
-      const err = error as AxiosError<{ error: string }>;
+} catch (error) {
+  const err = error as AxiosError<{ error: string }>;
 
-      console.log("STATUS:", err.response?.status);
-      console.log("URL:", err.config?.url);
-      console.log("DATA:", err.response?.data);
-      console.log("FULL ERROR:", err);
+  console.log("STATUS:", err.response?.status);
+  console.log("URL:", err.config?.url);
+  console.log("DATA:", err.response?.data);
 
-      toast.error(
-        err.response?.data?.error ??
-          "Помилка збереження"
-      );
-    } finally {
-      setSaveLoading(false);
-    }
+  if (err.response?.status === 409) {
+    setIsSaved(true);
+
+    setStory((prev) =>
+      prev
+        ? {
+            ...prev,
+            isSaved: true,
+          }
+        : prev
+    );
+
+    toast.success("Історія вже була збережена");
+
+    return;
+  }
+
+  toast.error(
+    err.response?.data?.error ??
+      "Помилка збереження"
+  );
+} finally {
+  setSaveLoading(false);
+}
   };
 
   if (loading) {

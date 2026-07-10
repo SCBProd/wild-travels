@@ -8,9 +8,14 @@ export async function POST(
 ) {
     const { storyId } = await params;
     
-    console.log("POST SAVE", storyId);
-    console.log("API_URL =", API_URL);
-   console.log("FETCH =", `${API_URL}/api/users/savedArticles/${storyId}`);
+   const cookieHeader = request.headers.get("cookie");
+
+console.log("COOKIE HEADER RAW:");
+console.log(cookieHeader);
+
+console.log("HAS accessToken:", cookieHeader?.includes("accessToken"));
+console.log("HAS refreshToken:", cookieHeader?.includes("refreshToken"));
+console.log("HAS sessionId:", cookieHeader?.includes("sessionId"));
 
   const response = await fetch(
     `${API_URL}/api/users/savedArticles/${storyId}`,
