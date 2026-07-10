@@ -3,17 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
-<<<<<<< HEAD
-import TravellerInfo from '@/components/Ui/TravellerInfo/TravellerInfo';
-import MessageNoStories from '@/components/MessageNoStories/MessageNoStories';
-import { PageTitle } from '@/components/Ui/PageTitle/PageTitle';
-import TravellersStories from '@/components/Ui/TravellersStories/TravellersStories';
-=======
-import TravellerInfo from '@/components/UI/TravellerInfo/TravellerInfo';
-import MessageNoStories from '@/components/UI/MessageNoStories/MessageNoStories';
-import { PageTitle } from '@/components/UI/PageTitle/PageTitle';
-import TravellersStories from '@/components/UI/TravellersStories/TravellersStories';
->>>>>>> main
+
+import TravellerInfo from '@/components/ui/TravellerInfo/TravellerInfo';
+import MessageNoStories from '../../../../components/ui/MessageNoStories/MessageNoStories';
+import { PageTitle } from '@/components/ui/PageTitle/PageTitle';
+import TravellersStories from '@/components/ui/TravellersStories/TravellersStories';
+
 import LoaderComponent from '@/components/Loader/Loader';
 
 import type { Story } from '@/types/story';
