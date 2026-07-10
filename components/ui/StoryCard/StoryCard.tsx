@@ -1,33 +1,31 @@
 'use client';
 
+import { useAuthStore } from '@/lib/store/useAuthStore';
+/// import { useStoriesStore } from '@/lib/store/useStoriesStore';
 import Image from 'next/image';
-import Link from 'next/link';
-import type { Story } from '@/types/story';
-import styles from './StoryCard.module.css';
+import { Icon } from '../Icon/Icon';
+import { PageTitle } from '../PageTitle/PageTitle';
+import { Story } from '@/types/story';
+import { CustomLink } from '../Link/Link';
+import SaveStoryButton  from '../SaveStoryButton/SaveStoryButton';
+import styles from '@/components/ui/StoryCard/StoryCard.module.css';
+import { useEffect } from 'react';
 
 type Props = {
   story: Story;
   isPriority?: boolean;
-  onSave?: (id: string) => void;
 };
 
-function getMetaPrimary(story: Story) {
-  if (story.author?.name) return story.author.name;
-  if (typeof story.ownerId === 'object' && story.ownerId?.name) {
-    return story.ownerId.name;
-  }
+export default function StoryCard({ story, isPriority = false }: Props) {
+  const { title, img, ownerId } = story;
 
-  // Категорія як fallback
-  if (typeof story.category === 'object' && story.category?.category) {
-    return story.category.category;
-  }
-  if (typeof story.category === 'string') {
-    return story.category;
-  }
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
-  return 'Без категорії';
-}
+  const initialIsSaved = useStoriesStore(
+    (s) => s.savedStories[story._id] ?? false,
+  );
 
+<<<<<<< HEAD
 export default function StoryCard({
   story,
   isPriority = false,
@@ -35,40 +33,52 @@ export default function StoryCard({
 }: Props) {
   const metaPrimary = getMetaPrimary(story);
 
+=======
+  const storyRateFromStore = useStoriesStore((s) => s.storiesRate[story._id]);
+
+  const rate = storyRateFromStore ?? story.rate;
+
+  const initStoryRate = useStoriesStore((s) => s.initStoryRate);
+
+  useEffect(() => {
+    if (storyRateFromStore === undefined) {
+      initStoryRate(story._id, story.rate);
+    }
+  }, [story._id, story.rate, storyRateFromStore, initStoryRate]);
+>>>>>>> main
 
   return (
-    <article className={styles.card}>
-      <div className={styles.imageWrapper}>
+    <div className={styles.card}>
+      <div className={styles.imageWrapper} aria-hidden="true">
         <Image
-          src={story.img}
-          alt={story.title}
+          src={img}
+          alt={title}
           fill
+          sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
           className={styles.image}
-          priority={isPriority}
-          sizes="(min-width: 1200px) 33vw, (min-width: 768px) 50vw, 100vw"
+          {...(isPriority ? { priority: true } : { loading: 'lazy' })}
         />
       </div>
 
       <div className={styles.content}>
         <p className={styles.meta}>
-          <span className={styles.name}>{metaPrimary}</span>
-          <span className={styles.metaSeparator}>•</span>
-          <span className={styles.savedMeta}>
-            {story.savedCount}
-            <svg
-              className={styles.savedMetaIcon}
-              width="16"
-              height="16"
-              aria-hidden="true"
-            >
-              <use href="/Icons/icons.svg#icon-bookmark" />
-            </svg>
-          </span>
+          {ownerId.name}
+          <span className={styles.metaSeparator}>·</span>
+          {rate}
+          <Icon
+            name="icon-bookmark"
+            width={16}
+            height={16}
+            className={styles.svg}
+          />
         </p>
 
-        <h3 className={styles.title}>{story.title}</h3>
+        <PageTitle className={styles.title} tag="h3">
+          {title}
+        </PageTitle>
 
         <div className={styles.actions}>
+<<<<<<< HEAD
           <Link href={`/stories/${story._id}`} className={styles.infoBtn}>
             Переглянути статтю
           </Link>
@@ -86,8 +96,25 @@ export default function StoryCard({
     <use href="/Icons/icons.svg#icon-bookmark" />
   </svg>
 </button>
+=======
+          <CustomLink
+            href={`/stories/${story._id}`}
+            variant="secondary"
+            className={styles.infoBtn}
+          >
+            Переглянути статтю
+          </CustomLink>
+
+          <SaveStoryButton
+            storyId={story._id}
+            initialIsSaved={initialIsSaved}
+            isAuthenticated={isAuthenticated}
+            variant="icon"
+            className={styles.iconBtn}
+          />
+>>>>>>> main
         </div>
       </div>
-    </article>
+    </div>
   );
 }
