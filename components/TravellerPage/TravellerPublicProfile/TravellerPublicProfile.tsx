@@ -27,6 +27,7 @@ export default function TravellerPublicProfile({
           sizes="(max-width: 768px) 80px, 100px"
           className={styles.avatar}
           priority
+          unoptimized
         />
       </div>
       <div className={styles.meta}>
