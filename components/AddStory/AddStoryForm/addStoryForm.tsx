@@ -2,18 +2,19 @@
 
 import { Field, Formik, Form, FormikHelpers, ErrorMessage } from "formik"
 import Image from "next/image"
-import { useEffect, useId, useState, } from "react"
+import { useEffect, useId, useRef, useState, } from "react"
 import css from './addStoryForm.module.css'
 
 import Select from "react-select"
 import { selectStyles, type CategoryOption } from "./selectStyles"
 import * as Yup from "yup"
+import { createNewStory, getCategories } from "@/lib/api/storyApi"
 
 type OrderFormValues = {
-    file: File | undefined;
+    img: File | undefined;
     title: string;
     category: string;
-    message: string
+    article: string
 }
 
 type CategoryItem = {
@@ -22,14 +23,14 @@ type CategoryItem = {
 }
 
 const initialValues: OrderFormValues  = {
-    file: undefined,
+    img: undefined,
     title: "",
     category: "Категорія",
-    message: "",
+    article: "",
 }
 
 const validationSchema = Yup.object().shape({
-    file: Yup.mixed<File>().required("Оберіть файл"),
+    img: Yup.mixed<File>().required("Оберіть файл"),
     title: Yup.string()
         .min(2, "Мінімум 2 символи")
         .max(40, "Максимум 40 символів")
@@ -37,7 +38,7 @@ const validationSchema = Yup.object().shape({
     category: Yup.string()
         .required("Обери категорію")
         .notOneOf(["Категорія"], "Обери категорію"),
-    message: Yup.string()
+    article: Yup.string()
         .min(12, "Мінімум 12 символів")
         .max(3000, "Максимум 3000 символів")
         .required("Залиши опис")    
@@ -48,6 +49,7 @@ const AddStoryForm = () => {
     const [preview, setPreview] = useState<string | undefined>(undefined)
     const [placeholderSrc, setPlaceholderSrc] = useState('/Placeholder-mobile1x.webp')
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const fileInputRef = useRef<HTMLInputElement | null>(null)
     const fieldId = useId()
 
     useEffect(() => {
@@ -55,7 +57,7 @@ const AddStoryForm = () => {
 
         const fetchCategories = async () => {
             try {
-                const data = await ()
+                const data = await getCategories ()
                 if (isMounted) {
                     const apiItems =
                         Array.isArray(data)
@@ -103,11 +105,30 @@ const AddStoryForm = () => {
         }
     }, [])
 
-    const handleSubmit = (
+    const handleSubmit = async (
         values: OrderFormValues,
         actions: FormikHelpers<OrderFormValues>) => {
-        actions.resetForm()
-        setPreview(undefined)
+        try {
+            await createNewStory({
+                img: values.img as File,
+                title: values.title.trim(),
+                category: values.category,
+                article: values.article.trim(),
+            })
+
+            setPreview(undefined)
+            setIsMenuOpen(false)
+        } catch (error) {
+            console.error("Failed to create story", error)
+        } finally {
+            actions.setSubmitting(false)
+            actions.resetForm()
+                setPreview(undefined)
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = ""
+                }
+        }
+        
     }
 
     const options: CategoryOption[] = categories.map((category) => ({
@@ -123,12 +144,12 @@ const AddStoryForm = () => {
             validateOnMount
             onSubmit={handleSubmit}
         >
-            {({ values, errors, submitCount, isValid, dirty, setFieldValue, resetForm }) => {
+            {({ values, errors, submitCount, isValid, dirty, isSubmitting, setFieldValue, resetForm }) => {
             const isSubmitted = submitCount > 0
             const titleHasRequiredError =
                 isSubmitted && Boolean(errors.title) && values.title.trim().length === 0
-            const messageHasRequiredError =
-                isSubmitted && Boolean(errors.message) && values.message.trim().length === 0
+            const articleHasRequiredError =
+                isSubmitted && Boolean(errors.article) && values.article.trim().length === 0
             const categoryHasRequiredError =
                 isSubmitted
                 && Boolean(errors.category)
@@ -140,12 +161,20 @@ const AddStoryForm = () => {
                 resetForm()
                 setPreview(undefined)
                 setIsMenuOpen(false)
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = ""
+                }
             }
 
             return (
+             <>   
+            <p className={`${css.label} ${css.marginBottom16}`}>Обкладинка статті</p> 
+
             <Form className={css.form}>
+                
                 <div className={css.imageWrap}>
                     <Image
+                        
                         src={preview || placeholderSrc}
                         alt="Фото Історії"
                         loading="eager"
@@ -159,18 +188,19 @@ const AddStoryForm = () => {
                     Завантажити фото
                 </label>
 
-                <Field name="file">
+                <Field name="img">
                     {() => (
                         <input
+                            ref={fileInputRef}
                             id={`${fieldId}-file`}
                             type="file"
-                            name="file"
+                            name="img"
                             className={css.fileInput}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                const file = e.currentTarget.files?.[0]
-                                setFieldValue("file", file)
-                                if (file) {
-                                    setPreview(URL.createObjectURL(file))
+                                const img = e.currentTarget.files?.[0]
+                                setFieldValue("img", img)
+                                if (img) {
+                                    setPreview(URL.createObjectURL(img))
                                 }
                             }}
                         />
@@ -178,7 +208,7 @@ const AddStoryForm = () => {
                 </Field>
 
                 <ErrorMessage
-                    name="file"
+                    name="img"
                     component="span"
                     className={css.error}/>
 
@@ -232,19 +262,19 @@ const AddStoryForm = () => {
 
                 </label>
 
-                <label htmlFor="message"className={css.label}>
+                <label htmlFor={`${fieldId}-article`}className={css.label}>
                     Текст історії
                     <Field
-                        id="message"
+                        id={`${fieldId}-article`}
                         as="textarea"
-                        name="message"
+                        name="article"
                         rows={5}
-                        className={`${css.placeholder} ${css.input} ${css.textarea} ${messageHasRequiredError ? css.inputError : ""}`}
+                        className={`${css.placeholder} ${css.input} ${css.textarea} ${articleHasRequiredError ? css.inputError : ""}`}
                         placeholder="Ваша історія тут"
                     />
 
                     <ErrorMessage
-                        name="message"
+                        name="article"
                         component="span"
                         className={`${css.error}`}/>
                 </label>
@@ -252,15 +282,16 @@ const AddStoryForm = () => {
                 <div className={css.buttonContainer}>
                     <button
                         type="submit"
-                        className={isFormReady ? css.normalButton : css.buttonDisabled}
-                        
-                    >
+                        className={isFormReady  ? css.normalButton : css.buttonDisabled}
+                        disabled={isSubmitting}
+                        aria-disabled={!isFormReady}>
                         Зберегти
                     </button>
                     <button type="button" className={css.buttonCancel} onClick={handleCancel}>Відмінити</button>
                 </div>
 
             </Form>
+            </>  
             )}}
         </Formik>
     )

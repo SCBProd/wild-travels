@@ -6,6 +6,7 @@ import AppLayout from '@/components/layout/AppLayout/AppLayout';
 import AuthProvider from '@/components/providers/AuthProvider';
 import ToasterProvider from '@/components/providers/ToasterProvider';
 import ThemeProvider from '@/components/providers/ThemeProvider';
+
 const montserrat = Montserrat({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
@@ -53,7 +54,7 @@ export default function RootLayout({
             <AppLayout>
               <AuthProvider>
                 <main>{children}</main>
-                </AuthProvider>
+              </AuthProvider>
             </AppLayout>
           </QueryProvider>
         </ThemeProvider>

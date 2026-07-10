@@ -81,6 +81,10 @@
     color: var(--color-scheme-2-text);
 }
 
+.marginBottom16 {
+    margin-bottom: 16px;
+}
+
 .placeholder::placeholder{
     color: var(--opacity-neutral-darkest-60);
     font-family: var(--font-family);
