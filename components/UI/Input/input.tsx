@@ -1,17 +1,17 @@
-
 'use client';
-import { forwardRef, InputHTMLAttributes, useId } from 'react';
 import { Icon } from '../Icon/Icon';
 import styles from './Input.module.css';
+import { forwardRef, InputHTMLAttributes, useId } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+
   label?: string;
   iconId?: string;
   error?: string;
+
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, iconId, className = '', id, ...props }, ref) => {
+export const Input = forwardRef<HTMLInputElement, InputProps>(  ({ label, error, iconId, className = '', id, ...props }, ref) => {
     const generatedId = useId();
     const inputId = id || generatedId;
     const errorId = `${inputId}-error`;
@@ -26,9 +26,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
         <div className={styles.inputWrapper}>
           <input
-            ref={ref}
-            id={inputId}
             className={`${styles.input} ${error ? styles.inputError : ''}`}
+            id={inputId}
+            ref={ref}
             aria-invalid={!!error}
             aria-describedby={error ? errorId : undefined}
             {...props}
