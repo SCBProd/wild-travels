@@ -11,7 +11,7 @@ import StoryDetails from "../../../../components/StoryPage/StoryDetails/StoryDet
 import SaveStory from "../../../../components/StoryPage/SaveStory/SaveStory";
 import { RecommendedStories } from "../../../../components/StoryPage/RecomendedStories/RecommendedStories";
 import LoaderComponent from "../../../../components/Loader/Loader";
-import ErrorWhileSavingModal from "../../../../components/UI/ErrorWhileSavingModal/ErrorWhileSavingModal";
+import ErrorWhileSavingModal from "../../../../components/ui/ErrorWhileSavingModal/ErrorWhileSavingModal";
 import NotFound from "./not-found";
 
 import type { Story } from "../../../../types/story";

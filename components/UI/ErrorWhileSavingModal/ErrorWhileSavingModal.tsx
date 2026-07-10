@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import Link from "next/link";
 
-import { Icon } from "../../UI/Icon//Icon"
+import { Icon } from "../Icon/Icon"
 import css from "./ErrorWhileSavingModal.module.css";
-import { PageTitle } from "../../../components/UI/PageTitle/PageTitle";
+import { PageTitle } from "../PageTitle/PageTitle";
 
 type Props = {
   onClose: () => void;

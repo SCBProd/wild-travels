@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
-import TravellerInfo from '@/components/UI/TravellerInfo/TravellerInfo';
+import TravellerInfo from '@/components/ui/TravellerInfo/TravellerInfo';
 import MessageNoStories from '@/components/MessageNoStories/MessageNoStories';
-import { PageTitle } from '@/components/UI/PageTitle/PageTitle';
-import TravellersStories from '@/components/UI/TravellersStories/TravellersStories';
+import { PageTitle } from '@/components/ui/PageTitle/PageTitle';
+import TravellersStories from '@/components/ui/TravellersStories/TravellersStories';
 import LoaderComponent from '@/components/Loader/Loader';
 
 import type { Story } from '@/types/story';
