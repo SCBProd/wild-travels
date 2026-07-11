@@ -47,7 +47,7 @@
   color: var(--color-scheme-2-text);
 
   overflow: hidden;
-  font-size: 26px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.5;
 }
@@ -75,10 +75,8 @@
   border-radius: 6px;
   color: #1b391b;
   background-color: rgba(255, 255, 255, 0.2);
-  transition:
-    background-color var(--transition-default),
-    border-color var(--transition-default),
-    color var(--transition-default);
+  transition: background-color var(--transition-default),
+    border-color var(--transition-default), color var(--transition-default);
 }
 
 .infoBtn:hover,
@@ -120,10 +118,8 @@
   fill: currentColor;
   background-color: rgba(255, 255, 255, 0.2);
   padding: 6px;
-  transition:
-    background-color var(--transition-default),
-    border-color var(--transition-default),
-    color var(--transition-default);
+  transition: background-color var(--transition-default),
+    border-color var(--transition-default), color var(--transition-default);
 }
 
 .iconBtn:hover,
@@ -145,9 +141,9 @@
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1440px) {
   .title {
-    font-size: 20px;
+    font-size: 26px;
     min-height: 84px;
   }
 
