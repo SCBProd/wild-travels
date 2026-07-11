@@ -1,5 +1,6 @@
 import TravellerPublicProfile from "@/components/TravellerPage/TravellerPublicProfile/TravellerPublicProfile";
 import { Metadata } from "next";
+import ProfileTabs from "@/components/ProfilePage/ProfileTabs/ProfileTabs";
 import {GetMeServer} from "@/lib/api/serverApi"
 export async function generateMetadata(): Promise<Metadata> {
 
@@ -28,7 +29,7 @@ export default async function Profile(){
     return(
         <>
                 <TravellerPublicProfile traveller={user}/>
-                {/* <ProfileTabs /> */}
+                <ProfileTabs/>
         </>
         )
 }

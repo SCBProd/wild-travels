@@ -1,5 +1,5 @@
-import { GetSavedStoriesServer } from "@/lib/api/storyApi";
-import SavedStoriesClient from "./SavedStoriesClient";
+import { GetSavedStoriesServer } from "@/lib/api/serverApi";
+import SavedStoriesClient from "./saved/SavedStoriesClient";
 
 
 

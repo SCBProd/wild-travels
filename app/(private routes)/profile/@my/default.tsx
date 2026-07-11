@@ -1,1 +1,1 @@
-export default  function DefaultMyStories() {return null}
+export default function DefaultMyStories() {return null}

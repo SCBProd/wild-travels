@@ -1,4 +1,4 @@
-import { GetOwnStoriesServer } from '@/lib/api/storyApi';
+import { GetOwnStoriesServer } from '@/lib/api/serverApi';
 import MyStoriesClient from './MyStoriesClient';
 
 export default async function MyStoriesPage() {

@@ -1,6 +1,5 @@
 import { nextServer } from "./api";
 import axios from "axios";
-import { cookies } from "next/headers";
 import type {
   CategoriesResponse,
   Story,
@@ -226,31 +225,3 @@ export const removeSavedArticle = async (storyId: string) => {
 };
 
 
-interface OwnStories{
-page:number;
-perPage:number;
-totalItems:number;
-totalPages:number;  
-stories:Story[]
-}
-
-
-export const GetOwnStoriesServer = async ():Promise<OwnStories> => {
-  const cookieStore = await cookies();
-  const {data} = await nextServer.get('/api/profile/own', {
-    headers: {
-      Cookie: cookieStore.toString(),
-    },
-  });
-  return data;
-};
-
-export const GetSavedStoriesServer = async() =>{
-  const cookieStore = await cookies();
-  const {data} = await nextServer.get('/api/profile/saved-stories', {
-    headers: {
-      Cookie: cookieStore.toString(),
-    },
-  });
-  return data;
-}
