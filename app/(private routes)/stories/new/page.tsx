@@ -3,7 +3,7 @@ import AddStoryForm from '@/components/AddStory/AddStoryForm/addStoryForm'
 import css from './AddStory.module.css'
 import { PageTitle } from '@/components/UI/PageTitle/PageTitle'
 
-export default function AddStory() {
+export default async function AddStory() {
     return (
         <div className={css.addStory}>
             

@@ -8,7 +8,13 @@ import css from './addStoryForm.module.css'
 import Select from "react-select"
 import { selectStyles, type CategoryOption } from "./selectStyles"
 import * as Yup from "yup"
+import axios from "axios"
+import { toast } from "react-hot-toast"
 import { createNewStory, getCategories } from "@/lib/api/storyApi"
+import ErrorWhileSavingModal from "@/components/UI/ErrorWhileSavingModal/ErrorWhileSavingModal"
+import LoaderComponent from "@/components/Loader/Loader"
+import { useRouter } from "next/navigation"
+
 
 type OrderFormValues = {
     img: File | undefined;
@@ -49,8 +55,11 @@ const AddStoryForm = () => {
     const [preview, setPreview] = useState<string | undefined>(undefined)
     const [placeholderSrc, setPlaceholderSrc] = useState('/Placeholder-mobile1x.webp')
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState(false)
     const fileInputRef = useRef<HTMLInputElement | null>(null)
+    const [loading, setLoading] = useState(false)
     const fieldId = useId()
+    const router = useRouter()
 
     useEffect(() => {
         let isMounted = true
@@ -108,25 +117,47 @@ const AddStoryForm = () => {
     const handleSubmit = async (
         values: OrderFormValues,
         actions: FormikHelpers<OrderFormValues>) => {
+        setLoading(true)
+
         try {
-            await createNewStory({
+           const story = await createNewStory({
                 img: values.img as File,
                 title: values.title.trim(),
                 category: values.category,
                 article: values.article.trim(),
             })
 
+            actions.resetForm()
             setPreview(undefined)
             setIsMenuOpen(false)
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ""
+            }
+            
+            router.push(`/stories/${story._id}`)
         } catch (error) {
+            let message = "Не вдалося створити історію. Спробуйте ще раз."
+
+            if (axios.isAxiosError(error)) {
+                message =
+                    error.response?.data?.message ||
+                    error.response?.data?.error ||
+                    error.message
+
+                if (error.response?.status === 401) {
+                    setIsErrorModalOpen(true)
+                    console.error("Failed to create story", error)
+                    return
+                }
+            } else if (error instanceof Error) {
+                message = error.message
+            }
+
+            toast.error(message)
             console.error("Failed to create story", error)
         } finally {
             actions.setSubmitting(false)
-            actions.resetForm()
-                setPreview(undefined)
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = ""
-                }
+            setLoading(false)
         }
         
     }
@@ -144,7 +175,7 @@ const AddStoryForm = () => {
             validateOnMount
             onSubmit={handleSubmit}
         >
-            {({ values, errors, submitCount, isValid, dirty, isSubmitting, setFieldValue, resetForm }) => {
+            {({ values, errors, submitCount, isValid, dirty, isSubmitting, setFieldValue, resetForm, setTouched }) => {
             const isSubmitted = submitCount > 0
             const titleHasRequiredError =
                 isSubmitted && Boolean(errors.title) && values.title.trim().length === 0
@@ -167,7 +198,15 @@ const AddStoryForm = () => {
             }
 
             return (
-             <>   
+             <> 
+             {loading && (
+                <div className={css.loaderOverlay}>
+                    <LoaderComponent />
+                </div>
+             )}
+            {isErrorModalOpen && (
+                <ErrorWhileSavingModal onClose={() => setIsErrorModalOpen(false)} />
+            )}
             <p className={`${css.label} ${css.marginBottom16}`}>Обкладинка статті</p> 
 
             <Form className={css.form}>
@@ -235,6 +274,7 @@ const AddStoryForm = () => {
                         className={`${css.categorySelect} ${css.placeholder} ${categoryHasRequiredError ? css.categoryError : ""}`}
                         classNamePrefix="category-select"
                         styles={selectStyles}
+                        isSearchable={false}
                         instanceId={`${fieldId}-category-select`}
                         aria-invalid={categoryHasRequiredError}
                         menuIsOpen={isMenuOpen}
@@ -279,15 +319,35 @@ const AddStoryForm = () => {
                         className={`${css.error}`}/>
                 </label>
 
-                <div className={css.buttonContainer}>
+             <div className={css.buttonContainer}>
                     <button
                         type="submit"
-                        className={isFormReady  ? css.normalButton : css.buttonDisabled}
+                        className={isFormReady ? css.normalButton : css.buttonDisabled}
                         disabled={isSubmitting}
-                        aria-disabled={!isFormReady}>
+                        aria-disabled={!isFormReady}
+                        onClick={() => {
+                            if (!isFormReady && !isSubmitting) {
+                                void setTouched(
+                                    {
+                                        img: true,
+                                        title: true,
+                                        category: true,
+                                        article: true,
+                                    },
+                                    true
+                                )
+                            }
+                        }}
+                    >
                         Зберегти
                     </button>
-                    <button type="button" className={css.buttonCancel} onClick={handleCancel}>Відмінити</button>
+                    <button
+                        type="button"
+                        className={css.buttonCancel}
+                        onClick={handleCancel}
+                    >
+                        Відмінити
+                    </button>
                 </div>
 
             </Form>
