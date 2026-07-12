@@ -1,5 +1,5 @@
-import { Button } from '../buttons/btn';
-import styles from './pagination.module.css';
+import { Button } from '@/components/ui/buttons/btn';
+import styles from './Pagination.module.css';
 
 interface PaginationProps {
   onClick: () => void;
