@@ -1,20 +1,17 @@
-'use client';
-
-import { Story } from '@/types/story';
+'use client'
+import { StoriesResponse } from '@/types/story';
 import css from './MyStoriesClient.module.css';
 import StoriesList from '@/components/ProfilePage/StoriesList/StoriesList';
 import Link from 'next/link';
 
 interface Props {
-  stories: Story[];
+res:StoriesResponse;
 }
-
-export default function MyStoriesClient({ stories }: Props) {
-  return (
-    <>
-      {stories && stories.length > 0 ? (
-        <StoriesList stories={stories} />
-      ) : (
+export default function MyStoriesClient({res}:Props){
+    return (
+  <>
+    {res && res.data.length > 0 ? (<StoriesList stories={res.data}/>) : (
+      <>
         <div className={css.null_stories_div}>
           <h2 className={css.text}>
             Ви ще нічого не публікували, поділіться своєю першою історією!
@@ -23,7 +20,8 @@ export default function MyStoriesClient({ stories }: Props) {
             Опублікувати історію
           </Link>
         </div>
-      )}
-    </>
-  );
+      </>
+    )}
+  </>
+);
 }
