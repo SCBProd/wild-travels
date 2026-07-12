@@ -1,101 +1,112 @@
-'use client';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-
-import TravellerInfo from '@/components/ui/TravellerInfo/TravellerInfo';
-import MessageNoStories from '../../../../components/ui/MessageNoStories/MessageNoStories';
-import { PageTitle } from '@/components/ui/PageTitle/PageTitle';
-import TravellersStories from '@/components/ui/TravellersStories/TravellersStories';
-
-import LoaderComponent from '@/components/Loader/Loader';
+import TravelerClient from './TravelerClient';
 
 import type { Story } from '@/types/story';
-import type { Traveller } from '@/types/traveller';
-import styles from './Page.module.css';
 
-export default function TravelerPage() {
-  const params = useParams();
-  const travellerId = Array.isArray(params?.travellerId)
-    ? params.travellerId[0]
-    : (params?.travellerId as string | undefined);
+interface PageProps {
+  params: Promise<{
+    travellerId: string;
+  }>;
+}
 
-  const [user, setUser] = useState<Traveller | null>(null);
-  const [stories, setStories] = useState<Story[]>([]);
-  const [loading, setLoading] = useState(true);
+async function getTraveller(travellerId: string) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/travellers/${travellerId}`,
+    {
+      cache: 'no-store',
+    },
+  );
 
-  useEffect(() => {
-    async function loadTravellerData() {
-      if (!travellerId) return;
-
-      try {
-        const res = await fetch(`/api/travellers/${travellerId}`);
-        if (!res.ok) throw new Error();
-
-        const data = await res.json();
-
-        setUser(data.user);
-
-        const enrichedStories =
-          data.stories?.map((story: Story) => ({
-            ...story,
-            ownerId: {
-              _id: String(data.user._id),
-              name: data.user.name,
-              avatarUrl: data.user.avatarUrl,
-            },
-            author: {
-              name: data.user.name,
-            },
-          })) || [];
-
-        setStories(enrichedStories as Story[]);
-      } catch {
-        setUser(null);
-        setStories([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadTravellerData();
-  }, [travellerId]);
-
-  if (loading) {
-    return (
-      <div className={styles.loaderWrapper}>
-        <LoaderComponent />
-      </div>
-    );
+  if (!res.ok) {
+    return null;
   }
 
-  if (!user) {
-    return (
-      <div className={styles.notFoundContainer}>Такий користувач відсутній</div>
-    );
+  return res.json();
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { travellerId } = await params;
+
+  const data = await getTraveller(travellerId);
+
+  if (!data) {
+    return {
+      title: 'Мандрівника не знайдено | Природні Мандри',
+    };
   }
 
-  const hasStories = stories.length > 0;
+  const image =
+    data.user.avatarUrl || `${process.env.NEXT_PUBLIC_BASE_URL}/og-image.jpg`;
+
+  return {
+    title: `${data.user.name} | Природні Мандри`,
+    description: `Перегляньте профіль мандрівника ${data.user.name}, ознайомтеся з його історіями та відкрийте нові маршрути для подорожей Україною.`,
+
+    alternates: {
+      canonical: `/travellers/${travellerId}`,
+    },
+
+    robots: {
+      index: true,
+      follow: true,
+    },
+
+    openGraph: {
+      title: `${data.user.name} | Природні Мандри`,
+      description: `Перегляньте профіль мандрівника ${data.user.name} та його історії про подорожі.`,
+      url: `/travellers/${travellerId}`,
+      siteName: 'Природні Мандри',
+      locale: 'uk_UA',
+      type: 'profile',
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: data.user.name,
+        },
+      ],
+    },
+
+    twitter: {
+      card: 'summary_large_image',
+      title: `${data.user.name} | Природні Мандри`,
+      description: `Історії подорожей від ${data.user.name}.`,
+      images: [image],
+    },
+  };
+}
+
+export default async function Page({ params }: PageProps) {
+  const { travellerId } = await params;
+
+  const data = await getTraveller(travellerId);
+
+  if (!data) {
+    notFound();
+  }
+
+  const stories = (data.stories as Story[]).map((story) => ({
+    ...story,
+    ownerId: {
+      _id: String(data.user._id),
+      name: data.user.name,
+      avatarUrl: data.user.avatarUrl,
+    },
+    author: {
+      name: data.user.name,
+    },
+  }));
 
   return (
-    <main className={`container ${styles.pageContainer}`}>
-      <TravellerInfo traveller={user} />
-
-      <PageTitle tag="h2" className={styles.title}>
-        Статті Мандрівника
-      </PageTitle>
-
-      {hasStories ? (
-        <TravellersStories ownerId={travellerId} perPage={6} />
-      ) : (
-        <div className={styles.messageWrapper}>
-          <MessageNoStories
-            text="Цей користувач ще не публікував історій"
-            buttonText="Назад до історій"
-            linkTo="/stories"
-          />
-        </div>
-      )}
-    </main>
+    <TravelerClient
+      travellerId={travellerId}
+      user={data.user}
+      stories={stories}
+    />
   );
 }
