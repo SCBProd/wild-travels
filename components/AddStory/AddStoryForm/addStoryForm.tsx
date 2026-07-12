@@ -4,17 +4,15 @@ import { Field, Formik, Form, FormikHelpers, ErrorMessage } from "formik"
 import Image from "next/image"
 import { useEffect, useId, useRef, useState, } from "react"
 import css from './addStoryForm.module.css'
-
-import Select from "react-select"
+import Select from "@/components/CategorySelect/CategorySelect"
 import { selectStyles, type CategoryOption } from "./selectStyles"
 import * as Yup from "yup"
 import axios from "axios"
 import { toast } from "react-hot-toast"
-import { createNewStory, getCategories } from "@/lib/api/storyApi"
+import { createNewStory,} from "@/lib/api/storyApi"
 import ErrorWhileSavingModal from "@/components/UI/ErrorWhileSavingModal/ErrorWhileSavingModal"
 import LoaderComponent from "@/components/Loader/Loader"
 import { useRouter } from "next/navigation"
-
 
 type OrderFormValues = {
     img: File | undefined;
@@ -23,9 +21,8 @@ type OrderFormValues = {
     article: string
 }
 
-type CategoryItem = {
-    _id: string;
-    category: string;
+type CategoriesProps = {
+    categories: string[];
 }
 
 const initialValues: OrderFormValues  = {
@@ -50,8 +47,8 @@ const validationSchema = Yup.object().shape({
         .required("Залиши опис")    
 })
 
-const AddStoryForm = () => {
-    const [categories, setCategories] = useState<string[]>([])
+const AddStoryForm = ({categories}:CategoriesProps) => {
+   
     const [preview, setPreview] = useState<string | undefined>(undefined)
     const [placeholderSrc, setPlaceholderSrc] = useState('/Placeholder-mobile1x.webp')
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -62,31 +59,6 @@ const AddStoryForm = () => {
     const router = useRouter()
 
     useEffect(() => {
-        let isMounted = true
-
-        const fetchCategories = async () => {
-            try {
-                const data = await getCategories ()
-                if (isMounted) {
-                    const apiItems =
-                        Array.isArray(data)
-                            ? data
-                            : (typeof data === 'object' && data !== null && 'data' in data && Array.isArray(data.data)
-                                ? data.data
-                                : [])
-
-                    const normalizedCategories = (apiItems as CategoryItem[])
-                        .map((item) => item?.category)
-                        .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
-
-                    setCategories(normalizedCategories)
-                }
-            } catch (error) {
-                console.error("Failed to load categories", error)
-            }
-        }
-
-        void fetchCategories()
 
         const updatePlaceholder = () => {
             const isRetina = window.devicePixelRatio >= 2
@@ -109,7 +81,7 @@ const AddStoryForm = () => {
         window.addEventListener('resize', updatePlaceholder)
 
         return () => {
-            isMounted = false
+            
             window.removeEventListener('resize', updatePlaceholder)
         }
     }, [])
@@ -135,26 +107,27 @@ const AddStoryForm = () => {
             }
             
             router.push(`/stories/${story._id}`)
-        } catch (error) {
-            let message = "Не вдалося створити історію. Спробуйте ще раз."
 
+        } catch (error) {
+            
+            let message = "Не вдалося створити історію. Спробуйте ще раз."
+                
             if (axios.isAxiosError(error)) {
                 message =
                     error.response?.data?.message ||
                     error.response?.data?.error ||
                     error.message
 
-                if (error.response?.status === 401) {
+               if (error.response?.status === 401) {
                     setIsErrorModalOpen(true)
-                    console.error("Failed to create story", error)
-                    return
+                    
                 }
             } else if (error instanceof Error) {
                 message = error.message
             }
 
-            toast.error(message)
-            console.error("Failed to create story", error)
+           toast.error(message)
+             
         } finally {
             actions.setSubmitting(false)
             setLoading(false)
@@ -291,7 +264,7 @@ const AddStoryForm = () => {
                         value={options.find(
                             (option) => option.value === values.category
                         ) || null}
-                        onChange={(option) =>
+                        onChange={(option: CategoryOption | null) =>
                             setFieldValue("category", option?.value ?? "")
                         }
                     />
