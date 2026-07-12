@@ -65,6 +65,19 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  border: 1px solid rgba(27, 57, 27, 0.15);
+  border-radius: 6px;
+  color: #1b391b;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: background-color var(--transition-default),
+    border-color var(--transition-default), color var(--transition-default);
+}
+
+.infoBtn:hover,
+.infoBtn:focus-visible {
+  background-color: #1b391b;
+  border-color: #1b391b;
+  color: #fff;
 }
 
 .name {
@@ -91,6 +104,8 @@
   width: 44px;
   height: 44px;
   padding: 6px;
+  transition: background-color var(--transition-default),
+    border-color var(--transition-default), color var(--transition-default);
   fill: currentColor;
 }
 
@@ -106,8 +121,9 @@
   }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1440px) {
   .title {
+    min-height: 84px;
     font-size: 20px;
   }
 

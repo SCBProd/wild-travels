@@ -1,4 +1,4 @@
-import { PageTitle } from "@/components/Ui/PageTitle/PageTitle";
+import { PageTitle } from "@/components/ui/PageTitle/PageTitle";
 import SaveStoryButton from "@/components/ui/SaveStoryButton/SaveStoryButton";
 import css from "./SaveStory.module.css";
 
