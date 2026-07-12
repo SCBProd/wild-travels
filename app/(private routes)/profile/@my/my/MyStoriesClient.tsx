@@ -1,5 +1,5 @@
 'use client'
-import { OwnStoriesResponse, StoriesResponse } from '@/types/story';
+import { StoriesResponse } from '@/types/story';
 import css from './MyStoriesClient.module.css';
 import StoriesList from '@/components/ProfilePage/StoriesList/StoriesList'
 import Link from 'next/link';
