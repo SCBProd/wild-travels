@@ -50,7 +50,9 @@ export const metadata: Metadata = {
 };
 
 export default async function SavedStories() {
-  const { data } = await GetSavedStoriesServer();
-
-  return <SavedStoriesClient savedStories={data} />;
+  const res = await GetSavedStoriesServer();  
+  
+  return (
+    <SavedStoriesClient res={res}/>
+  );
 }
