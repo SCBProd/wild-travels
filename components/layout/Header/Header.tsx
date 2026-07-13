@@ -74,7 +74,9 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`${css.navLink} ${pathname === link.href ? css.activeLink : ''}`}
+              className={`${css.navLink} ${
+                pathname === link.href ? css.activeLink : ''
+              }`}
             >
               {link.name}
             </Link>
@@ -82,7 +84,9 @@ export default function Header() {
           {isAuthorized && (
             <Link
               href="/profile"
-              className={`${css.navLink} ${pathname === '/profile' ? css.activeLink : ''}`}
+              className={`${css.navLink} ${
+                pathname === '/profile' ? css.activeLink : ''
+              }`}
             >
               Мій Профіль
             </Link>
@@ -140,7 +144,9 @@ export default function Header() {
         </div>
 
         <div
-          className={`${css.burgerMenu} ${isBurgerOpen ? css.burgerMenuOpen : ''}`}
+          className={`${css.burgerMenu} ${
+            isBurgerOpen ? css.burgerMenuOpen : ''
+          }`}
         >
           <div className={css.burgerMenuContent}>
             <nav className={css.burgerNav}>
