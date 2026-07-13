@@ -13,6 +13,8 @@ import { createNewStory,} from "@/lib/api/storyApi"
 import ErrorWhileSavingModal from "@/components/UI/ErrorWhileSavingModal/ErrorWhileSavingModal"
 import LoaderComponent from "@/components/Loader/Loader"
 import { useRouter } from "next/navigation"
+import { Button } from '@/components/ui/buttons/btn'
+import { useMutation } from "@tanstack/react-query"
 
 type OrderFormValues = {
     img: File | undefined;
@@ -54,9 +56,34 @@ const AddStoryForm = ({categories}:CategoriesProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false)
     const fileInputRef = useRef<HTMLInputElement | null>(null)
-    const [loading, setLoading] = useState(false)
     const fieldId = useId()
     const router = useRouter()
+
+    const mutation = useMutation({ mutationFn: createNewStory,
+         onSuccess: (story) => {
+             if (fileInputRef.current) { 
+                fileInputRef.current.value = "" 
+            } 
+            setPreview(undefined)
+            setIsMenuOpen(false)
+
+            router.push(`/stories/${story._id}`) 
+        },
+         onError: (error) => { 
+            let message = "Не вдалося створити історію. Спробуйте ще раз."
+
+            if (axios.isAxiosError(error)) {
+                message = error.response?.data?.message ||
+                error.response?.data?.error || 
+                error.message 
+                if (error.response?.status === 401) {
+                    setIsErrorModalOpen(true)
+                } 
+            } else if (error instanceof Error) {
+                message = error.message 
+            } 
+
+            toast.error(message) } })
 
     useEffect(() => {
 
@@ -89,50 +116,14 @@ const AddStoryForm = ({categories}:CategoriesProps) => {
     const handleSubmit = async (
         values: OrderFormValues,
         actions: FormikHelpers<OrderFormValues>) => {
-        setLoading(true)
-
-        try {
-           const story = await createNewStory({
-                img: values.img as File,
-                title: values.title.trim(),
-                category: values.category,
+            
+            mutation.mutate({
+                img: values.img as File, 
+                title: values.title.trim(), 
+                category: values.category, 
                 article: values.article.trim(),
             })
-
-            actions.resetForm()
-            setPreview(undefined)
-            setIsMenuOpen(false)
-            if (fileInputRef.current) {
-                fileInputRef.current.value = ""
-            }
-            
-            router.push(`/stories/${story._id}`)
-
-        } catch (error) {
-            
-            let message = "Не вдалося створити історію. Спробуйте ще раз."
-                
-            if (axios.isAxiosError(error)) {
-                message =
-                    error.response?.data?.message ||
-                    error.response?.data?.error ||
-                    error.message
-
-               if (error.response?.status === 401) {
-                    setIsErrorModalOpen(true)
-                    
-                }
-            } else if (error instanceof Error) {
-                message = error.message
-            }
-
-           toast.error(message)
-             
-        } finally {
-            actions.setSubmitting(false)
-            setLoading(false)
-        }
-        
+        actions.setSubmitting(false)
     }
 
     const options: CategoryOption[] = categories.map((category) => ({
@@ -172,7 +163,7 @@ const AddStoryForm = ({categories}:CategoriesProps) => {
 
             return (
              <> 
-             {loading && (
+             {mutation.isPending && (
                 <div className={css.loaderOverlay}>
                     <LoaderComponent />
                 </div>
@@ -240,6 +231,7 @@ const AddStoryForm = ({categories}:CategoriesProps) => {
                         className={css.error}/>
 
                 </label>
+                
 
                 <label htmlFor={`${fieldId}-category`} className={css.label}>
                     Категорія
@@ -293,7 +285,7 @@ const AddStoryForm = ({categories}:CategoriesProps) => {
                 </label>
 
              <div className={css.buttonContainer}>
-                    <button
+                      <Button
                         type="submit"
                         className={isFormReady ? css.normalButton : css.buttonDisabled}
                         disabled={isSubmitting}
@@ -313,14 +305,14 @@ const AddStoryForm = ({categories}:CategoriesProps) => {
                         }}
                     >
                         Зберегти
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
                         className={css.buttonCancel}
                         onClick={handleCancel}
                     >
                         Відмінити
-                    </button>
+                    </Button>
                 </div>
 
             </Form>

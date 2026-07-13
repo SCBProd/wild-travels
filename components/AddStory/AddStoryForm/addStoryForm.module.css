@@ -162,7 +162,7 @@
     }
 }
 
-.buttonDisabled{
+button.buttonDisabled{
     border: 1px solid var(--color-mantis-dark);
     border-radius: 6px;
     padding-block: 6px;
@@ -182,7 +182,7 @@
     }
 }
 
-.buttonCancel{
+button.buttonCancel{
     background: var(--opacity-neutral-darkest-5);
     border: 1px solid var(--color-scheme-2-border);
     border-radius: 6px;
@@ -196,29 +196,29 @@
     color: var(--color-scheme-2-text);
 }
 
-.buttonCancel:hover,
-.buttonCancel:focus-visible{
+button.buttonCancel:hover:not(:disabled),
+button.buttonCancel:focus-visible:not(:disabled){
     border: 1px solid var(--opacity-transparent);
     background: var(--color-mantis-dark);
     color: var(--color-white);
 }
 
-.buttonCancel:focus {
+button.buttonCancel:focus {
     outline: none;
 }
 
-.buttonCancel:active{
+button.buttonCancel:active:not(:disabled){
     color: var(--color-white);
     background: var(--color-mantis-darker);
 }
 
 @media screen and (min-width: 768px) {
-    .buttonCancel {
+    button.buttonCancel {
        width: 203px;
     }
 }
 
-.normalButton{
+button.normalButton{
     background: var(--color-mantis-dark);
     border: 1px solid var(--color-scheme-2-border);
     color: var(--color-white);
@@ -232,18 +232,18 @@
     line-height: 1.5;  
 }
 
-.normalButton:hover,
-.normalButton:focus-visible{
+button.normalButton:hover,
+button.normalButton:focus-visible{
     border: 1px solid var(--color-mantis-dark);
     background: var(--color-mantis-lighter);
     color: var(--color-scheme-2-text);
 }
 
-.normalButton:focus {
+button.normalButton:focus {
     outline: none;
 }
 
-.normalButton:active{
+button.normalButton:active{
     color: var(--color-white);
     background: var(--color-mantis-darker);
 }
