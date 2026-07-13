@@ -4,7 +4,6 @@ import './globals.css';
 import QueryProvider from '@/components/providers/QueryProvider';
 import AppLayout from '@/components/layout/AppLayout/AppLayout';
 import AuthProvider from '@/components/providers/AuthProvider';
-import ToasterProvider from '@/components/providers/ToasterProvider';
 import ThemeProvider from '@/components/providers/ThemeProvider';
 import { Toaster } from 'react-hot-toast';
 
@@ -51,7 +50,6 @@ export default function RootLayout({
       <body className={`${montserrat.className} green-bg`}>
         <ThemeProvider>
           <QueryProvider>
-            <ToasterProvider />
             <AppLayout>
               <AuthProvider>{children}</AuthProvider>
               <Toaster position="top-right" />

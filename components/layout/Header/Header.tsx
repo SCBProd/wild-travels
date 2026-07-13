@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -8,29 +8,69 @@ import css from './header.module.css';
 
 import AuthBar from '../AuthBar/AuthBar';
 import UserBar from '../UserBar/UserBar';
-import { checkSession } from '@/lib/api/clientApi';
+import { checkSession, getMe } from '@/lib/api/clientApi';
+import { useAuthStore } from '@/lib/store/useAuthStore';
 
 export default function Header() {
   const pathname = usePathname();
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
-  const mockUser = { name: 'Мандрівник' };
+  const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
+  const clearIsAuthenticated = useAuthStore(
+    (state) => state.clearIsAuthenticated,
+  );
+
+  const isAuthorized = !!user;
 
   const toggleBurger = () => setIsBurgerOpen(!isBurgerOpen);
   const closeBurger = () => setIsBurgerOpen(false);
 
-  useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        const loggedIn = await checkSession();
-        setIsAuthorized(!!loggedIn);
-      } catch {
-        setIsAuthorized(false);
+  const verifyAuth = useCallback(async () => {
+    const hasCookies =
+      typeof document !== 'undefined' && document.cookie.length > 0;
+
+    if (!hasCookies) {
+      clearIsAuthenticated();
+      return;
+    }
+
+    try {
+      const loggedIn = await checkSession();
+      if (loggedIn) {
+        if (!user) {
+          const userData = await getMe();
+          setUser(userData);
+        }
+      } else {
+        clearIsAuthenticated();
       }
+    } catch (error) {
+      console.error('Помилка авторизації:', error);
+      clearIsAuthenticated();
+    }
+  }, [user, setUser, clearIsAuthenticated]);
+
+  useEffect(() => {
+    const runVerification = async () => {
+      await verifyAuth();
     };
-    verifyAuth();
-  }, [pathname]);
+    runVerification();
+  }, [pathname, verifyAuth]);
+
+  useEffect(() => {
+    const handleAuthChange = async () => {
+      await verifyAuth();
+    };
+
+    window.addEventListener('storage', handleAuthChange);
+    window.addEventListener('focus', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('storage', handleAuthChange);
+      window.removeEventListener('focus', handleAuthChange);
+    };
+  }, [verifyAuth]);
 
   useEffect(() => {
     if (isBurgerOpen) {
@@ -52,8 +92,6 @@ export default function Header() {
   if (pathname === '/login' || pathname === '/register') {
     return null;
   }
-
-  if (isAuthorized === null) return null;
 
   return (
     <header className={css.header}>
@@ -103,11 +141,11 @@ export default function Header() {
               <button
                 className={css.burgerButton}
                 onClick={toggleBurger}
-                aria-label="Меню"
+                aria-label="Menu"
               >
                 <Image
                   src={isBurgerOpen ? '/Icons/close.svg' : '/Icons/menu.svg'}
-                  alt="Меню"
+                  alt="Menu"
                   className={css.burgerIcon}
                   width={24}
                   height={24}
@@ -123,17 +161,17 @@ export default function Header() {
               </div>
 
               <div className={css.userProfileHeaderHiddenTablet}>
-                <UserBar user={mockUser} />
+                <UserBar user={user} />
               </div>
 
               <button
                 className={css.burgerButton}
                 onClick={toggleBurger}
-                aria-label="Меню"
+                aria-label="Menu"
               >
                 <Image
                   src={isBurgerOpen ? '/Icons/close.svg' : '/Icons/menu.svg'}
-                  alt="Меню"
+                  alt="Menu"
                   className={css.burgerIcon}
                   width={24}
                   height={24}
@@ -163,9 +201,11 @@ export default function Header() {
             </nav>
             <div className={css.burgerFooter}>
               {!isAuthorized ? (
-                <div className={css.burgerMobileActionOnly}>
-                  <AuthBar />
-                </div>
+                isBurgerOpen && (
+                  <div className={css.burgerMobileActionOnly}>
+                    <AuthBar />
+                  </div>
+                )
               ) : (
                 <>
                   <div className={css.burgerMobileActionOnly}>
@@ -178,7 +218,7 @@ export default function Header() {
                     </Link>
                   </div>
                   <div className={css.burgerUserProfileCentered}>
-                    <UserBar user={mockUser} />
+                    <UserBar user={user} />
                   </div>
                 </>
               )}

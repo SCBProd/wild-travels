@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import AddStoryForm from '@/components/AddStory/AddStoryForm/addStoryForm';
 import css from './AddStory.module.css';
 import PageTitle from '@/components/HomePage/PageTitle/PageTitle';
