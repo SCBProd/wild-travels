@@ -1,6 +1,5 @@
 import { nextServer } from "./api";
-import { AxiosError } from "axios";
-
+import {AxiosError} from "axios";
 import type {
   CategoriesResponse,
   Story,
@@ -45,7 +44,7 @@ async function getTravellerProfile(id: string) {
   return user;
 }
 
-async function enrichStoriesWithOwners(
+export async function enrichStoriesWithOwners(
   stories: Story[]
 ): Promise<Story[]> {
   const ownerIds = Array.from(
@@ -235,9 +234,22 @@ export const removeSavedArticle = async (storyId: string) => {
   return data;
 };
 
-export const createNewStory = async (
-  data: NewStory
-): Promise<Story> => {
+export const GetSavedStories = async(page:number,perPage:number) =>{
+  const {data} = await nextServer.get('/api/profile/saved-stories', {
+      params: {
+        page,
+        perPage,
+      },
+      withCredentials:true,
+  });
+    const enrichedStories = await enrichStoriesWithOwners(data.data);
+    return {
+    ...data,
+    data: enrichedStories,
+  };
+}
+
+export const createNewStory = async (data: NewStory): Promise<Story> => {
   const formData = new FormData();
   formData.append("img", data.img);
   formData.append("title", data.title);
