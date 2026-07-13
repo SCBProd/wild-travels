@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import styles from './TravellerPublicProfile.module.css';
+import css from './TravellerPublicProfile.module.css';
 
 interface TravellerData {
   name: string;
@@ -15,24 +15,29 @@ export default function TravellerPublicProfile({
   traveller,
 }: TravellerPublicProfileProps) {
   return (
-    <div className={styles.travellerInfo}>
-      <div className={styles.avatarWrapper}>
-        <Image
-          src={
-            traveller.avatarUrl ||
-            'https://ac.goit.global/fullstack/react/default-avatar.jpg'
-          }
-          alt={`Аватар мандрівника ${traveller.name}`}
-          fill
-          sizes="(max-width: 768px) 80px, 100px"
-          className={styles.avatar}
-          priority
-        />
+    <>
+      <div className={css.container}>
+        <div className={css.travellerInfo}>
+          <div className={css.avatarWrapper}>
+            <Image
+            width={145}
+            height={145}
+              src={
+                traveller.avatarUrl ||
+                'https://ac.goit.global/fullstack/react/default-avatar.jpg'
+              }
+              alt={`Аватар мандрівника ${traveller.name}`}
+              className={css.avatar}
+              priority
+              unoptimized
+            />
+          </div>
+          <div className={css.meta}>
+            <h2 className={css.name}>{traveller.name}</h2>
+            <p className={css.count}>Статей: {traveller.articlesAmount ?? 0}</p>
+          </div>
+        </div>
       </div>
-      <div className={styles.meta}>
-        <h2 className={styles.name}>{traveller.name}</h2>
-        <p className={styles.count}>Статей: {traveller.articlesAmount ?? 0}</p>
-      </div>
-    </div>
+    </>
   );
 }
