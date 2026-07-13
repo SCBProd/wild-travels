@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { toast } from 'react-hot-toast';
 
-import { useAuthStore } from "../../../../lib/store/useAuthStore";
+import { useAuthStore } from '../../../../lib/store/useAuthStore';
 
-import StoryDetails from "../../../../components/StoryPage/StoryDetails/StoryDetails";
-import SaveStory from "../../../../components/StoryPage/SaveStory/SaveStory";
-import { RecommendedStories } from "../../../../components/StoryPage/RecomendedStories/RecommendedStories";
-import LoaderComponent from "../../../../components/Loader/Loader";
-import ErrorWhileSavingModal from "../../../../components/ui/ErrorWhileSavingModal/ErrorWhileSavingModal";
-import NotFound from "./not-found";
+import StoryDetails from '../../../../components/StoryPage/StoryDetails/StoryDetails';
+import SaveStory from '../../../../components/StoryPage/SaveStory/SaveStory';
+import { RecommendedStories } from '../../../../components/StoryPage/RecomendedStories/RecommendedStories';
+import LoaderComponent from '../../../../components/Loader/Loader';
+import ErrorWhileSavingModal from '../../../../components/ui/ErrorWhileSavingModal/ErrorWhileSavingModal';
+import NotFound from './not-found';
 
-import type { Story } from "../../../../types/story";
+import type { Story } from '../../../../types/story';
 
 import {
   getStoryById,
   getRecommendedStories,
   addSavedArticle,
   removeSavedArticle,
-} from "../../../../lib/api/storyApi";
+} from '../../../../lib/api/storyApi';
 
-import css from "./page.module.css";
+import css from './page.module.css';
 
 export default function StoryPage() {
   const params = useParams<{ storyId: string }>();
@@ -38,9 +38,7 @@ export default function StoryPage() {
 
   const [showModal, setShowModal] = useState(false);
 
-  const isAuthenticated = useAuthStore(
-    (state) => state.isAuthenticated
-  );
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   useEffect(() => {
     const loadStory = async () => {
@@ -53,8 +51,7 @@ export default function StoryPage() {
 
         setStory(storyData);
 
-        const recommendedStories =
-          await getRecommendedStories(storyData);
+        const recommendedStories = await getRecommendedStories(storyData);
 
         setRecommended(recommendedStories);
 
@@ -78,28 +75,25 @@ export default function StoryPage() {
     }
 
     try {
-      const current = recommended.find(
-        (story) => story._id === id
-      );
+      const current = recommended.find((story) => story._id === id);
 
       if (!current) return;
 
-      console.log("Recommended story:", current);
+      console.log('Recommended story:', current);
       console.log({
-  id: current?._id,
-  title: current?.title,
-  isSaved: current?.isSaved,
+        id: current?._id,
+        title: current?.title,
+        isSaved: current?.isSaved,
       });
-      
 
       if (current.isSaved) {
         await removeSavedArticle(id);
 
-        toast.success("Історію видалено зі збережених");
+        toast.success('Історію видалено зі збережених');
       } else {
         await addSavedArticle(id);
 
-        toast.success("Історію збережено");
+        toast.success('Історію збережено');
       }
 
       setRecommended((prev) =>
@@ -108,40 +102,35 @@ export default function StoryPage() {
             ? {
                 ...item,
                 isSaved: !item.isSaved,
-                savedCount:
-                  item.savedCount +
-                  (item.isSaved ? -1 : 1),
+                savedCount: item.savedCount + (item.isSaved ? -1 : 1),
               }
-            : item
-        )
+            : item,
+        ),
       );
-} catch (error) {
-  const err = error as AxiosError<{ error: string }>;
+    } catch (error) {
+      const err = error as AxiosError<{ error: string }>;
 
-  if (err.response?.status === 409) {
-    toast.success("Історія вже збережена");
+      if (err.response?.status === 409) {
+        toast.success('Історія вже збережена');
 
-    setRecommended((prev) =>
-      prev.map((item) =>
-        item._id === id
-          ? {
-              ...item,
-              isSaved: true,
-            }
-          : item
-      )
-    );
+        setRecommended((prev) =>
+          prev.map((item) =>
+            item._id === id
+              ? {
+                  ...item,
+                  isSaved: true,
+                }
+              : item,
+          ),
+        );
 
-    return;
-  }
+        return;
+      }
 
-  console.error(error);
+      console.error(error);
 
-  toast.error(
-    err.response?.data?.error ??
-      "Помилка збереження"
-  );
-}
+      toast.error(err.response?.data?.error ?? 'Помилка збереження');
+    }
   };
 
   const handleSave = async () => {
@@ -167,10 +156,10 @@ export default function StoryPage() {
                 isSaved: false,
                 savedCount: prev.savedCount - 1,
               }
-            : prev
+            : prev,
         );
 
-        toast.success("Історію видалено зі збережених");
+        toast.success('Історію видалено зі збережених');
       } else {
         await addSavedArticle(story._id);
 
@@ -183,42 +172,39 @@ export default function StoryPage() {
                 isSaved: true,
                 savedCount: prev.savedCount + 1,
               }
-            : prev
+            : prev,
         );
 
-        toast.success("Історію збережено");
+        toast.success('Історію збережено');
       }
-} catch (error) {
-  const err = error as AxiosError<{ error: string }>;
+    } catch (error) {
+      const err = error as AxiosError<{ error: string }>;
 
-  console.log("STATUS:", err.response?.status);
-  console.log("URL:", err.config?.url);
-  console.log("DATA:", err.response?.data);
+      console.log('STATUS:', err.response?.status);
+      console.log('URL:', err.config?.url);
+      console.log('DATA:', err.response?.data);
 
-  if (err.response?.status === 409) {
-    setIsSaved(true);
+      if (err.response?.status === 409) {
+        setIsSaved(true);
 
-    setStory((prev) =>
-      prev
-        ? {
-            ...prev,
-            isSaved: true,
-          }
-        : prev
-    );
+        setStory((prev) =>
+          prev
+            ? {
+                ...prev,
+                isSaved: true,
+              }
+            : prev,
+        );
 
-    toast.success("Історія вже була збережена");
+        toast.success('Історія вже була збережена');
 
-    return;
-  }
+        return;
+      }
 
-  toast.error(
-    err.response?.data?.error ??
-      "Помилка збереження"
-  );
-} finally {
-  setSaveLoading(false);
-}
+      toast.error(err.response?.data?.error ?? 'Помилка збереження');
+    } finally {
+      setSaveLoading(false);
+    }
   };
 
   if (loading) {
@@ -229,8 +215,8 @@ export default function StoryPage() {
     return <NotFound />;
   }
 
- return (
-  <main className={css.page}>
+  return (
+    <main className={css.page}>
       <StoryDetails story={story} />
 
       <SaveStory
@@ -245,10 +231,8 @@ export default function StoryPage() {
       />
 
       {showModal && (
-        <ErrorWhileSavingModal
-          onClose={() => setShowModal(false)}
-        />
+        <ErrorWhileSavingModal onClose={() => setShowModal(false)} />
       )}
-  </main>
-);
+    </main>
+  );
 }
