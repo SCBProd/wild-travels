@@ -11,7 +11,6 @@ import StoryDetails from "../../../../components/StoryPage/StoryDetails/StoryDet
 import SaveStory from "../../../../components/StoryPage/SaveStory/SaveStory";
 import { RecommendedStories } from "../../../../components/StoryPage/RecomendedStories/RecommendedStories";
 import LoaderComponent from "../../../../components/Loader/Loader";
-import ErrorWhileSavingModal from "../../../../components/ui/ErrorWhileSavingModal/ErrorWhileSavingModal";
 import NotFound from "./not-found";
 
 import type { Story } from "../../../../types/story";
@@ -24,6 +23,7 @@ import {
 } from "../../../../lib/api/storyApi";
 
 import css from "./page.module.css";
+import ErrorWhileSavingModal from "@/components/ui/ErrorWhileSavingModal/ErrorWhileSavingModal";
 
 export default function StoryPage() {
   const params = useParams<{ storyId: string }>();
