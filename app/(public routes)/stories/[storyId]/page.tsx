@@ -23,7 +23,7 @@ import {
 } from "../../../../lib/api/storyApi";
 
 import css from "./page.module.css";
-import ErrorWhileSavingModal from "@/components/UI/ErrorWhileSavingModal/ErrorWhileSavingModal";
+import ErrorWhileSavingModal from "@/components/ui/ErrorWhileSavingModal/ErrorWhileSavingModal";
 
 export default function StoryPage() {
   const params = useParams<{ storyId: string }>();

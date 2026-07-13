@@ -10,7 +10,7 @@ import * as Yup from "yup"
 import axios from "axios"
 import { toast } from "react-hot-toast"
 import { createNewStory,} from "@/lib/api/storyApi"
-import ErrorWhileSavingModal from "@/components/UI/ErrorWhileSavingModal/ErrorWhileSavingModal"
+import ErrorWhileSavingModal from "@/components/ui/ErrorWhileSavingModal/ErrorWhileSavingModal"
 import LoaderComponent from "@/components/Loader/Loader"
 import { useRouter } from "next/navigation"
 import { Button } from '@/components/ui/buttons/btn'
