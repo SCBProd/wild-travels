@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { logout } from '@/lib/api/clientApi';
+import { toast } from 'react-hot-toast';
 import css from './userBar.module.css';
 
 type UserBarProps = {
@@ -13,9 +15,25 @@ type UserBarProps = {
 
 export default function UserBar({ user }: UserBarProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const userName = user?.name || 'Користувач';
   const userAvatar = user?.avatarUrl || '/Icons/avatar.svg';
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await logout();
+      toast.success('Ви успішно вийшли з системи');
+      setIsModalOpen(false);
+
+      window.location.href = '/';
+    } catch {
+      toast.error('Не вдалося вийти з системи');
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className={css.wrapper}>
@@ -36,6 +54,7 @@ export default function UserBar({ user }: UserBarProps) {
         type="button"
         className={css.logoutBtn}
         onClick={() => setIsModalOpen(true)}
+        disabled={isLoggingOut}
       >
         <Image src="/Icons/logout.svg" alt="Вихід" width={24} height={24} />
       </button>
@@ -47,6 +66,7 @@ export default function UserBar({ user }: UserBarProps) {
               type="button"
               className={css.closeBtn}
               onClick={() => setIsModalOpen(false)}
+              disabled={isLoggingOut}
             >
               <Image
                 src="/Icons/close.svg"
@@ -61,19 +81,20 @@ export default function UserBar({ user }: UserBarProps) {
 
             <div className={css.modalButtons}>
               <button
+                type="button"
                 className={css.cancelBtn}
                 onClick={() => setIsModalOpen(false)}
+                disabled={isLoggingOut}
               >
                 Відмінити
               </button>
               <button
+                type="button"
                 className={css.confirmBtn}
-                onClick={() => {
-                  setIsModalOpen(false);
-                  alert('Вихід із системи...');
-                }}
+                onClick={handleLogout}
+                disabled={isLoggingOut}
               >
-                Вийти
+                {isLoggingOut ? 'Вихід...' : 'Вийти'}
               </button>
             </div>
           </div>

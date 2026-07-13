@@ -8,18 +8,29 @@ import css from './header.module.css';
 
 import AuthBar from '../AuthBar/AuthBar';
 import UserBar from '../UserBar/UserBar';
+import { checkSession } from '@/lib/api/clientApi';
 
 export default function Header() {
   const pathname = usePathname();
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
-  const isAuthPage = pathname === '/login' || pathname === '/register';
-  const isAuthorized = true;
-
-  const mockUser = { name: 'Name' };
+  const mockUser = { name: 'Мандрівник' };
 
   const toggleBurger = () => setIsBurgerOpen(!isBurgerOpen);
   const closeBurger = () => setIsBurgerOpen(false);
+
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        const loggedIn = await checkSession();
+        setIsAuthorized(!!loggedIn);
+      } catch {
+        setIsAuthorized(false);
+      }
+    };
+    verifyAuth();
+  }, [pathname]);
 
   useEffect(() => {
     if (isBurgerOpen) {
@@ -38,9 +49,11 @@ export default function Header() {
     { name: 'Еко-Мандрівники', href: '/travellers' },
   ];
 
-  if (isAuthPage) {
+  if (pathname === '/login' || pathname === '/register') {
     return null;
   }
+
+  if (isAuthorized === null) return null;
 
   return (
     <header className={css.header}>
