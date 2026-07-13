@@ -60,16 +60,16 @@
 
 @media (min-width: 768px) {
   .card {
-    max-width: 218px;
-    min-height: 254px;
+    min-width: 218px;
+    min-height: 317px;
     padding: 32px 20px;
   }
 }
 
 @media (min-width: 1440px) {
   .card {
-    max-width: 310px;
-    min-height: 198px;
+    min-width: 310px;
+    min-height: 335px;
     padding: 24px;
   }
 
