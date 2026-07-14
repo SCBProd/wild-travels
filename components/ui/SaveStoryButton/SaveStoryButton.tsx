@@ -37,11 +37,7 @@ export default function SaveStoryButton({
   );
 }
 
-export function SaveButton({
-  isSaved,
-  isLoading,
-  onClick,
-}: Props) {
+export function SaveButton({ isSaved, isLoading, onClick }: Props) {
   return (
     <button
       type="button"
@@ -50,10 +46,10 @@ export function SaveButton({
       disabled={isLoading}
     >
       {isLoading
-        ? "Завантаження..."
+        ? 'Завантаження...'
         : isSaved
-        ? "Видалити зі збережених"
-        : "Зберегти"}
+          ? 'Видалити зі збережених'
+          : 'Зберегти'}
     </button>
   );
 }

@@ -100,6 +100,7 @@ export async function getTravellers(page: number): Promise<TravellersResponse> {
     }
     throw new Error('Щось пішло не так при отриманні даних про мандрівників');
   }
+
 }
 
 export type PopularStoriesResponse = {
@@ -170,3 +171,4 @@ export async function unsaveStory(
     throw new Error('Щось пішло не так. Спробуйте пізніше.');
   }
 }
+

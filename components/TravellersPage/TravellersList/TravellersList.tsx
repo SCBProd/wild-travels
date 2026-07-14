@@ -52,11 +52,8 @@ export default function TravellersList() {
         {data?.pages.map((page, pageIndex) => (
           <div key={pageIndex} ref={pageIndex > 0 ? lastElementRef : null}>
             {page.users.map((traveller: Traveller) => (
-  <TravellerCard
-    key={traveller._id}
-    traveller={traveller}
-  />
-))}
+              <TravellerCard key={traveller._id} traveller={traveller} />
+            ))}
           </div>
         ))}
       </div>

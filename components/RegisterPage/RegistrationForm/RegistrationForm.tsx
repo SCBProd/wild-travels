@@ -1,6 +1,6 @@
 'use client';
 
-import { userRegister } from '@/lib/api/clientApi';
+import { userRegister, getMe } from '@/lib/api/clientApi';
 import css from './RegistrationForm.module.css';
 import { useRouter } from 'next/navigation';
 import * as Yup from 'yup';
@@ -17,6 +17,7 @@ const initialValues: UserRegister = {
   email: '',
   name: '',
 };
+
 const registerValidationSchema = Yup.object().shape({
   name: Yup.string()
     .min(3, "Ім'я та прізвище має містити мінімум 3 символи")
@@ -27,31 +28,28 @@ const registerValidationSchema = Yup.object().shape({
       "Ім'я може містити тільки літери, пробіли, апостроф та дефіс",
     )
     .required("Ім'я та прізвище обов'язкове"),
-
   email: Yup.string().email('Невірний формат пошти').required(),
-
   password: Yup.string()
     .min(8, 'Пароль має містити мінімум 8 символів')
     .required(),
 });
+
 export default function RegistrationForm() {
   const setUser = useAuthStore((state) => state.setUser);
   const router = useRouter();
+
   const handleSubmit = async (
     values: UserRegister,
     { setSubmitting }: FormikHelpers<UserRegister>,
   ) => {
     try {
-      const user = await userRegister(values);
-
+      await userRegister(values);
+      const fullUserData = await getMe();
+      setUser(fullUserData);
       toast.success('Реєстрація успішна');
-
-      setUser(user);
-
       router.push('/');
     } catch (error) {
       let message = 'Щось пішло не так. Спробуйте ще раз.';
-
       if (error instanceof Error) {
         message = error.message;
       } else if (axios.isAxiosError(error)) {
@@ -60,12 +58,12 @@ export default function RegistrationForm() {
           error.response?.data?.error ||
           error.message;
       }
-
       toast.error(message);
     } finally {
       setSubmitting(false);
     }
   };
+
   return (
     <div className="container">
       <motion.h3
@@ -115,7 +113,6 @@ export default function RegistrationForm() {
                       meta.touched && meta.error ? css.errorInput : ''
                     }`}
                   />
-
                   <p className={css.error}>{meta.touched ? meta.error : ''}</p>
                 </>
               )}
@@ -144,7 +141,6 @@ export default function RegistrationForm() {
                       meta.touched && meta.error ? css.errorInput : ''
                     }`}
                   />
-
                   <p className={css.error}>{meta.touched ? meta.error : ''}</p>
                 </>
               )}
@@ -172,7 +168,6 @@ export default function RegistrationForm() {
                       meta.touched && meta.error ? css.errorInput : ''
                     }`}
                   />
-
                   <p className={css.error}>{meta.touched ? meta.error : ''}</p>
                 </>
               )}

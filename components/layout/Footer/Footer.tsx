@@ -7,12 +7,10 @@ import clsx from 'clsx';
 import css from './footer.module.css';
 import { Icon } from '@/components/ui/Icon/Icon';
 
-
 export default function Footer() {
   const pathname = usePathname();
 
-  const isAuthPage =
-    pathname === '/login' || pathname === '/register';
+  const isAuthPage = pathname === '/login' || pathname === '/register';
 
   if (isAuthPage) {
     return (

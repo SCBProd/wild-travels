@@ -1,10 +1,12 @@
 import { GetOwnStoriesServer } from '@/lib/api/serverApi';
 import MyStoriesClient from './MyStoriesClient';
+import { StoriesResponse } from '@/types/story';
 
 export default async function MyStoriesPage() {
-  const stories = await GetOwnStoriesServer();
+  const res = await GetOwnStoriesServer();
+  
 
   return (
-    <MyStoriesClient stories={stories.stories} />
+    <MyStoriesClient res={res as unknown as StoriesResponse}/>
   );
 }
