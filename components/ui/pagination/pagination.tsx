@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/buttons/btn';
 import styles from './pagination.module.css';
 

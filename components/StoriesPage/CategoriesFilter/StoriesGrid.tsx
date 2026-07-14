@@ -8,11 +8,7 @@ type Props = {
   onSave: (id: string) => void;
 };
 
-export default function StoriesGrid({
-  stories,
-  savedStoryIds,
-  onSave,
-}: Props) {
+export default function StoriesGrid({ stories, savedStoryIds, onSave }: Props) {
   return (
     <div className={styles.grid}>
       {stories.map((story, index) => (
