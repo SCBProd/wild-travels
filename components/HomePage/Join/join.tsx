@@ -1,12 +1,12 @@
 'use client';
 
-import Link from 'next/link';
+import { CustomLink } from '@/components/ui/Link/Link';
 import { useAuthStore } from '@/lib/store/useAuthStore';
 import styles from './join.module.css';
 
 export default function Join() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const linkHref = isAuthenticated ? '/auth/profile' : '/auth/register';
+  const linkHref = isAuthenticated ? '/profile' : '/register';
   const linkText = isAuthenticated ? 'Збережені статті' : 'Зареєструватися';
 
   return (
@@ -22,9 +22,12 @@ export default function Join() {
           сталих мандрів та натхнення для нових маршрутів Україною.
         </p>
 
-        <Link href={linkHref} className={styles.button}>
-          {linkText}
-        </Link>
+        <CustomLink
+  href={linkHref}
+  className={styles.button}
+>
+  {linkText}
+</CustomLink>
       </div>
     </section>
   );
