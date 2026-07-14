@@ -154,11 +154,11 @@
   flex-direction: column;
   align-items: center;
   padding-top: 24px;
+  gap: 32px;
 }
 
 .burgerNav a {
-  width: 100%;
-  padding: 8px 16px;
+  padding: 0;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
   font-size: 16px;
@@ -167,10 +167,6 @@
   text-decoration: none;
   color: #1b391b;
   transition: color 0.2s ease;
-}
-
-.burgerNav a + a {
-  margin-top: 16px;
 }
 
 .burgerNav a:hover,
@@ -213,14 +209,6 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-}
-
-.divider {
-  width: 1px;
-  height: 24px;
-  background-color: #d5e5db;
-  margin: 0 8px;
-  display: block;
 }
 
 .logoutBtn {
