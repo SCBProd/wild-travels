@@ -122,8 +122,6 @@ export const metadata: Metadata = {
   category: 'travel',
 };
 
-export const metadataBase = siteUrl ? new URL(siteUrl) : undefined;
-
 export default function RootLayout({
   children,
 }: {
