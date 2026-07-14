@@ -11,18 +11,36 @@ import { User } from '@/types/user';
 
 export const getMe = async (): Promise<User> => {
   try {
-    const { data } = await nextServer.get<User>('/api/profile/me');
-    return data;
+    const response = await nextServer.get<User>('/api/profile/me');
+    return response.data;
   } catch (error: unknown) {
+    const axiosError = error as AxiosError;
+
+    if (axiosError.response?.status === 401) {
+      try {
+        await nextServer.post('/api/auth/refresh');
+
+        const retryResponse = await nextServer.get<User>('/api/profile/me');
+
+        return retryResponse.data;
+      } catch (refreshError) {
+        throw new Error('Сесія закінчилася. Увійдіть знову.');
+      }
+    }
+
+    // Безпечно витягуємо повідомлення без any
     let message = 'Не вдалося завантажити профіль';
 
-    if (error instanceof Error) {
+    if (
+      axiosError.response?.data &&
+      typeof axiosError.response.data === 'object'
+    ) {
+      const data = axiosError.response.data as Record<string, any>;
+      message = data.message || data.error || message;
+    } else if (axiosError.message) {
+      message = axiosError.message;
+    } else if (error instanceof Error) {
       message = error.message;
-    } else if (axios.isAxiosError(error)) {
-      message =
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        error.message;
     }
 
     throw new Error(message);
@@ -30,8 +48,9 @@ export const getMe = async (): Promise<User> => {
 };
 
 export const checkSession = async () => {
-  const response =
-    await nextServer.get<CheckSessionRequest>('/api/auth/refresh');
+  const response = await nextServer.get<CheckSessionRequest>(
+    '/api/auth/refresh',
+  );
   return response.data.success;
 };
 
@@ -100,7 +119,6 @@ export async function getTravellers(page: number): Promise<TravellersResponse> {
     }
     throw new Error('Щось пішло не так при отриманні даних про мандрівників');
   }
-
 }
 
 export type PopularStoriesResponse = {
@@ -152,9 +170,7 @@ export async function saveStory(storyId: string): Promise<SaveStoryResponse> {
   }
 }
 
-export async function unsaveStory(
-  storyId: string,
-): Promise<SaveStoryResponse> {
+export async function unsaveStory(storyId: string): Promise<SaveStoryResponse> {
   try {
     const response = await nextServer.delete<SaveStoryResponse>(
       `/api/stories/${storyId}/save`,
@@ -163,7 +179,9 @@ export async function unsaveStory(
   } catch (error: unknown) {
     if (error instanceof AxiosError) {
       const serverMessage = error.response?.data?.message || error.message;
-      throw new Error(serverMessage || 'Не вдалося прибрати статтю зі збереженого');
+      throw new Error(
+        serverMessage || 'Не вдалося прибрати статтю зі збереженого',
+      );
     }
     if (error instanceof Error) {
       throw error;
@@ -171,4 +189,3 @@ export async function unsaveStory(
     throw new Error('Щось пішло не так. Спробуйте пізніше.');
   }
 }
-
