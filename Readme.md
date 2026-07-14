@@ -6,20 +6,20 @@ Wild travels is a web application for discovering and saving recreational locati
 
 ## About the Project
 
-Wild travels  is a team project developed as part of a collaborative learning process. The application helps users find interesting places for leisure and recreation while providing a convenient way to store and explore location information.
+Wild travels is a team project developed as part of a collaborative learning process. The application helps users find interesting places for leisure and recreation while providing a convenient way to store and explore location information.
 
 The project consists of a frontend application built with Next.js and a backend API built with Express.js and MongoDB.
 
 ## Features
 
-* User registration and authentication
-* User profile management
-* Browse available locations
-* Search and filter locations
-* View detailed information about locations
-* Create and view reviews
-* Upload images
-* Responsive design for desktop and mobile devices
+- User registration and authentication
+- User profile management
+- Browse available locations
+- Search and filter locations
+- View detailed information about locations
+- Create and view reviews
+- Upload images
+- Responsive design for desktop and mobile devices
 
 ## Tech Stack
 
@@ -50,8 +50,11 @@ The project consists of a frontend application built with Next.js and a backend 
 # Live Demo
 
 ### Frontend
+
 https://wild-travels.vercel.app/
+
 ### Backend API
+
 https://wild-travels-backend.onrender.com/
 
 # Installation and Setup
@@ -95,7 +98,7 @@ npm run dev
 The frontend will be available at:
 
 ```text
-http://localhost:3000
+http://localhost:3001
 ```
 
 ---
@@ -111,8 +114,18 @@ npm install
 ### Create a `.env` file
 
 ```env
-PORT=3001
-MONGODB_URI=your_mongodb_connection_string
+PORT=3000
+NODE_ENV=development
+
+MONGO_URL=your_mongodb_connection_string
+
+SMTP_HOST=smtp-relay.brevo.com
+SMTP_PORT=587
+SMTP_USER=your_brevo_username
+SMTP_PASSWORD=your_brevo_password
+SMTP_FROM=your_email@example.com
+
+JWT_SECRET=your_jwt_secret
 
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
@@ -169,6 +182,7 @@ src/
 ├── docs/          # Swagger/OpenAPI documentation
 └── server.js      # Application entry point
 ```
+
 # Implementation Details
 
 - Client-side state management with Zustand
@@ -181,19 +195,19 @@ src/
 
 # Team
 
-| Name | Role | GitHub |
-|------|------|--------|
-| Yevhen Kondrashov | **Team Leader** | [@SCBProd](https://github.com/SCBProd) |
-| Yevhenii Prygaro | **Scrum Master** | [@EugenePrygaro](https://github.com/EugenePrygaro) |
-| Vladyslav Harkusha | **Developer** | [@RavemanThc](https://github.com/RavemanThc) |
-| Dmytro Muliar | **Developer** | [@Dimonik7772](https://github.com/Dimonik7772) |
-| Ihor Kuzmenko | **Developer** | [@IhorKuzmenko](https://github.com/IhorKuzmenko) |
-| Anastasiia Paslavska | **Developer** | [@Nastyyyyya](https://github.com/Nastyyyyya) |
-| Evgeny Polyakov | **Developer** | [@Yevhen-Polyakov](https://github.com/Yevhen-Polyakov) |
-| Vladislav Gradoblyanskyi | **Developer** | [@vladislavgradoblyanskyi](https://github.com/vladislavgradoblyanskyi) |
-| Den Yaseniuk | **Developer** | [@luxqxqm](https://github.com/luxqxqm) |
-| Galyna Kud | **Developer** | [@Galyna-kud](https://github.com/Galyna-kud) |
-| Dariia | **Developer** | [@ccnvxii](https://github.com/ccnvxii) |
+| Name                     | Role             | GitHub                                                                 |
+| ------------------------ | ---------------- | ---------------------------------------------------------------------- |
+| Yevhen Kondrashov        | **Team Leader**  | [@SCBProd](https://github.com/SCBProd)                                 |
+| Yevhenii Prygaro         | **Scrum Master** | [@EugenePrygaro](https://github.com/EugenePrygaro)                     |
+| Vladyslav Harkusha       | **Developer**    | [@RavemanThc](https://github.com/RavemanThc)                           |
+| Dmytro Muliar            | **Developer**    | [@Dimonik7772](https://github.com/Dimonik7772)                         |
+| Ihor Kuzmenko            | **Developer**    | [@IhorKuzmenko](https://github.com/IhorKuzmenko)                       |
+| Anastasiia Paslavska     | **Developer**    | [@Nastyyyyya](https://github.com/Nastyyyyya)                           |
+| Evgeny Polyakov          | **Developer**    | [@Yevhen-Polyakov](https://github.com/Yevhen-Polyakov)                 |
+| Vladislav Gradoblyanskyi | **Developer**    | [@vladislavgradoblyanskyi](https://github.com/vladislavgradoblyanskyi) |
+| Den Yaseniuk             | **Developer**    | [@luxqxqm](https://github.com/luxqxqm)                                 |
+| Galyna Kud               | **Developer**    | [@Galyna-kud](https://github.com/Galyna-kud)                           |
+| Dariia                   | **Developer**    | [@ccnvxii](https://github.com/ccnvxii)                                 |
 
 # Contributors
 
