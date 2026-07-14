@@ -45,7 +45,7 @@ return {
     title: story.title,
     description,
     type: 'article',
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}/stories/${storyId}`,
+    url: `${process.env.NEXT_PUBLIC_API_URL }/stories/${storyId}`,
 
     images: [
       {
