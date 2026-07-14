@@ -309,3 +309,7 @@
     align-items: center;
   }
 }
+
+.fullWidthBtn {
+  width: 100%;
+}
