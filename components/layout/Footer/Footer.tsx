@@ -17,7 +17,9 @@ export default function Footer() {
       <footer className={css.footerAuth}>
         <div className={`container ${css.footerContainerAuth}`}>
           <p className={clsx(css.copyright, css.authCopyright)}>
-            © {new Date().getFullYear()} Природні Мандри. Усі права захищені.
+            © {new Date().getFullYear()}{' '}
+            <span className={css.mobileText}>Подорожники</span>
+            <span className={css.desktopText}>Природні Мандри</span>
           </p>
         </div>
       </footer>
