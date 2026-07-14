@@ -4,15 +4,19 @@ import type { NextRequest } from 'next/server';
 const publicRoutes = ['/', '/login', '/register', '/stories', '/travellers'];
 const privateRoutes = ['/profile', '/stories/new'];
 
+function matchesRoute(pathname: string, route: string) {
+  return pathname === route || pathname.startsWith(route + '/');
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const isPublicRoute = publicRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + '/'),
+  const isPrivateRoute = privateRoutes.some((route) =>
+    matchesRoute(pathname, route),
   );
-  const isPrivateRoute = privateRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + '/'),
-  );
+  const isPublicRoute =
+    !isPrivateRoute &&
+    publicRoutes.some((route) => matchesRoute(pathname, route));
 
   if (!isPublicRoute && !isPrivateRoute) {
     return NextResponse.next();
