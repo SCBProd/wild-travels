@@ -13,10 +13,11 @@ const montserrat = Montserrat({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_API_URL;
-
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL!),
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
 
   title: {
     default: 'Природні Мандри',
@@ -121,6 +122,8 @@ export const metadata: Metadata = {
 
   category: 'travel',
 };
+
+export const metadataBase = siteUrl ? new URL(siteUrl) : undefined;
 
 export default function RootLayout({
   children,
