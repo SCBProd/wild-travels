@@ -1,4 +1,3 @@
-import AuthFooter from '@/components/layout/AuthFooter/AuthFooter';
 import AuthHeader from '@/components/layout/AuthHeader/AuthHeader';
 import RegistrationForm from '@/components/RegisterPage/RegistrationForm/RegistrationForm';
 import css from './registrationglobal.module.css';
@@ -15,8 +14,6 @@ export default function Register() {
           <RegistrationForm />
         </div>
       </div>
-
-      <AuthFooter />
     </div>
   );
 }

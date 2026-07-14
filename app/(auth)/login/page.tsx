@@ -1,4 +1,3 @@
-import AuthFooter from '@/components/layout/AuthFooter/AuthFooter';
 import AuthHeader from '@/components/layout/AuthHeader/AuthHeader';
 import LoginForm from '@/components/LoginPage/LoginForm/LoginForm';
 import LoginBar from '@/components/layout/LoginBar/LoginBar';
@@ -15,8 +14,6 @@ export default function Login() {
           <LoginForm />
         </div>
       </div>
-
-      <AuthFooter />
     </div>
   );
 }
