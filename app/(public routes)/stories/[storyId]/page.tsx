@@ -45,7 +45,7 @@ return {
     title: story.title,
     description,
     type: 'article',
-    url: `https://wild-travels.vercel.app/stories/${storyId}`,
+    url: `${process.env.NEXT_PUBLIC_SITE_URL}/stories/${storyId}`,
 
     images: [
       {
