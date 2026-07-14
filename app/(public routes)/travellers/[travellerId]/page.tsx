@@ -1,101 +1,66 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-
-import TravellerInfo from '@/components/ui/TravellerInfo/TravellerInfo';
-import MessageNoStories from '../../../../components/ui/MessageNoStories/MessageNoStories';
-import { PageTitle } from '@/components/ui/PageTitle/PageTitle';
-import TravellersStories from '@/components/ui/TravellersStories/TravellersStories';
-
-import LoaderComponent from '@/components/Loader/Loader';
-
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import TravelerClient from './TravelerClient';
 import type { Story } from '@/types/story';
-import type { Traveller } from '@/types/traveller';
-import styles from './Page.module.css';
 
-export default function TravelerPage() {
-  const params = useParams();
-  const travellerId = Array.isArray(params?.travellerId)
-    ? params.travellerId[0]
-    : (params?.travellerId as string | undefined);
+interface PageProps {
+  params: Promise<{
+    travellerId: string;
+  }>;
+}
 
-  const [user, setUser] = useState<Traveller | null>(null);
-  const [stories, setStories] = useState<Story[]>([]);
-  const [loading, setLoading] = useState(true);
+async function getTravellerData(travellerId: string) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/travellers/${travellerId}`,
+    { cache: 'no-store' },
+  );
 
-  useEffect(() => {
-    async function loadTravellerData() {
-      if (!travellerId) return;
+  if (!res.ok) return null;
+  return res.json();
+}
 
-      try {
-        const res = await fetch(`/api/travellers/${travellerId}`);
-        if (!res.ok) throw new Error();
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { travellerId } = await params;
+  const data = await getTravellerData(travellerId);
 
-        const data = await res.json();
-
-        setUser(data.user);
-
-        const enrichedStories =
-          data.stories?.map((story: Story) => ({
-            ...story,
-            ownerId: {
-              _id: String(data.user._id),
-              name: data.user.name,
-              avatarUrl: data.user.avatarUrl,
-            },
-            author: {
-              name: data.user.name,
-            },
-          })) || [];
-
-        setStories(enrichedStories as Story[]);
-      } catch {
-        setUser(null);
-        setStories([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadTravellerData();
-  }, [travellerId]);
-
-  if (loading) {
-    return (
-      <div className={styles.loaderWrapper}>
-        <LoaderComponent />
-      </div>
-    );
+  if (!data || !data.user) {
+    return { title: 'Мандрівника не знайдено | Природні Мандри' };
   }
 
-  if (!user) {
-    return (
-      <div className={styles.notFoundContainer}>Такий користувач відсутній</div>
-    );
+  return {
+    title: `${data.user.name} | Природні Мандри`,
+    description: `Профіль мандрівника ${data.user.name}. Читайте історії подорожей та відкривайте нові маршрути.`,
+  };
+}
+
+export default async function TravelerPage({ params }: PageProps) {
+  const { travellerId } = await params;
+  const data = await getTravellerData(travellerId);
+
+  if (!data || !data.user) {
+    notFound();
   }
 
-  const hasStories = stories.length > 0;
+  const enrichedStories =
+    data.stories?.map((story: Story) => ({
+      ...story,
+      ownerId: {
+        _id: String(data.user._id),
+        name: data.user.name,
+        avatarUrl: data.user.avatarUrl,
+      },
+      author: {
+        name: data.user.name,
+      },
+    })) || [];
 
   return (
-    <main className={`container ${styles.pageContainer}`}>
-      <TravellerInfo traveller={user} />
-
-      <PageTitle tag="h2" className={styles.title}>
-        Статті Мандрівника
-      </PageTitle>
-
-      {hasStories ? (
-        <TravellersStories ownerId={travellerId} perPage={6} />
-      ) : (
-        <div className={styles.messageWrapper}>
-          <MessageNoStories
-            text="Цей користувач ще не публікував історій"
-            buttonText="Назад до історій"
-            linkTo="/stories"
-          />
-        </div>
-      )}
-    </main>
+    <TravelerClient
+      travellerId={travellerId}
+      user={data.user}
+      stories={enrichedStories}
+    />
   );
 }
