@@ -44,6 +44,11 @@ export default function TravellersList() {
     }
   }, [isError, error]);
 
+  useEffect(() => {
+    return () => {
+      lastElementRef.current = null;
+    };
+  });
   if (isLoading) return <TravellersListSkeleton count={12} />;
 
   return (
