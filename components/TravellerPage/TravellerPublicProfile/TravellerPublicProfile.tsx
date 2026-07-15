@@ -9,10 +9,12 @@ interface TravellerData {
 
 interface TravellerPublicProfileProps {
   traveller: TravellerData;
+  totalArticles: number;
 }
 
 export default function TravellerPublicProfile({
   traveller,
+  totalArticles,
 }: TravellerPublicProfileProps) {
   return (
     <>
@@ -20,8 +22,8 @@ export default function TravellerPublicProfile({
         <div className={css.travellerInfo}>
           <div className={css.avatarWrapper}>
             <Image
-            width={145}
-            height={145}
+              width={145}
+              height={145}
               src={
                 traveller.avatarUrl ||
                 'https://ac.goit.global/fullstack/react/default-avatar.jpg'
@@ -34,7 +36,7 @@ export default function TravellerPublicProfile({
           </div>
           <div className={css.meta}>
             <h2 className={css.name}>{traveller.name}</h2>
-            <p className={css.count}>Статей: {traveller.articlesAmount ?? 0}</p>
+            <p className={css.count}>Статей: {totalArticles}</p>
           </div>
         </div>
       </div>
