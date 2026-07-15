@@ -1,9 +1,10 @@
 import { nextServer } from "./api";
-import axios,{AxiosError} from "axios";
+import {AxiosError} from "axios";
 import type {
   CategoriesResponse,
   Story,
   StoriesResponse,
+  NewStory,
 } from "@/types/story";
 
 type GetStoriesParams = {
@@ -43,7 +44,7 @@ async function getTravellerProfile(id: string) {
   return user;
 }
 
-async function enrichStoriesWithOwners(
+export async function enrichStoriesWithOwners(
   stories: Story[]
 ): Promise<Story[]> {
   const ownerIds = Array.from(
@@ -231,4 +232,37 @@ export const removeSavedArticle = async (storyId: string) => {
   );
 
   return data;
+};
+
+export const getSavedStories = async (
+  page: number,
+  perPage: number,
+): Promise<StoriesResponse> =>{
+  const {data} = await nextServer.get<StoriesResponse>('/api/profile/saved-stories', {
+      params: {
+        page,
+        perPage,
+      },
+      withCredentials:true,
+  });
+    const enrichedStories = await enrichStoriesWithOwners(data.data);
+    return {
+    ...data,
+    data: enrichedStories,
+  };
+}
+
+export const createNewStory = async (data: NewStory): Promise<Story> => {
+  const formData = new FormData();
+  formData.append("img", data.img);
+  formData.append("title", data.title);
+  formData.append("category", data.category);
+  formData.append("article", data.article);
+
+  const res = await nextServer.post<Story>(
+    "/api/stories/new-story",
+    formData
+  );
+
+  return res.data;
 };

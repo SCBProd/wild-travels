@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { api } from '../api';
+import { api,} from '../api';
 
 export async function GET(req: NextRequest) {
   try {
@@ -34,3 +34,6 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+
+

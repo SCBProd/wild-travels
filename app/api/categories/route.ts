@@ -1,24 +1,19 @@
+import axios from 'axios';
 import { NextResponse } from 'next/server';
 import { api } from '../api';
 
 export async function GET() {
-  try {
-    const apiRes = await api.get('/categories');
+	try {
+		const { data } = await api.get('/categories');
+		return NextResponse.json(data);
+	} catch (error: unknown) {
+		const status = axios.isAxiosError(error)
+			? (error.response?.status ?? 500)
+			: 500;
+		const message = axios.isAxiosError(error)
+			? (error.response?.data?.message ?? 'Failed to fetch categories')
+			: 'Failed to fetch categories';
 
-    return NextResponse.json(apiRes.data, { status: apiRes.status });
-  } catch (error: unknown) {
-    console.error('Categories proxy error:', (error as Error).message);
-
-    return NextResponse.json(
-      {
-        message:
-          (error as { response?: { data?: { message?: string } } }).response
-            ?.data?.message || 'Failed to fetch categories',
-      },
-      {
-        status:
-          (error as { response?: { status?: number } }).response?.status || 500,
-      },
-    );
-  }
+		return NextResponse.json({ message }, { status });
+	}
 }

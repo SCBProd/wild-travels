@@ -50,3 +50,14 @@ export type StoryResponse = {
   story: Story;
   recommendedStories: Story[];
 };
+
+export type NewStory = {
+  img: File;
+  title: string;
+  category: string;
+  article: string;
+}
+
+
+
+

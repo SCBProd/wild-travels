@@ -1,6 +1,6 @@
 'use client';
 
-import { userRegister } from '@/lib/api/clientApi';
+import { userRegister, getMe } from '@/lib/api/clientApi';
 import css from './RegistrationForm.module.css';
 import { useRouter } from 'next/navigation';
 import * as Yup from 'yup';
@@ -17,41 +17,43 @@ const initialValues: UserRegister = {
   email: '',
   name: '',
 };
+
 const registerValidationSchema = Yup.object().shape({
   name: Yup.string()
-    .min(3, "Ім'я та прізвище має містити мінімум 3 символи")
-    .max(100, "Занадто довге ім'я")
     .trim()
+    .min(3, "Ім'я та прізвище мають містити щонайменше 3 символи")
+    .max(100, "Ім'я та прізвище не можуть містити більше ніж 100 символів")
     .matches(
       /^[a-zA-Zа-яА-ЯіІїЇєЄґҐ\s'-]+$/,
-      "Ім'я може містити тільки літери, пробіли, апостроф та дефіс",
+      "Ім'я та прізвище можуть містити лише літери, пробіли, апостроф і дефіс",
     )
-    .required("Ім'я та прізвище обов'язкове"),
+    .required("Вкажіть ім'я та прізвище"),
 
-  email: Yup.string().email('Невірний формат пошти').required(),
+  email: Yup.string()
+    .email('Введіть коректну електронну пошту')
+    .required("Електронна пошта є обов'язковою"),
 
   password: Yup.string()
-    .min(8, 'Пароль має містити мінімум 8 символів')
-    .required(),
+    .min(8, 'Пароль має містити щонайменше 8 символів')
+    .required("Пароль є обов'язковим"),
 });
+
 export default function RegistrationForm() {
   const setUser = useAuthStore((state) => state.setUser);
   const router = useRouter();
+
   const handleSubmit = async (
     values: UserRegister,
     { setSubmitting }: FormikHelpers<UserRegister>,
   ) => {
     try {
-      const user = await userRegister(values);
-
+      await userRegister(values);
+      const fullUserData = await getMe();
+      setUser(fullUserData);
       toast.success('Реєстрація успішна');
-
-      setUser(user);
-
       router.push('/');
     } catch (error) {
       let message = 'Щось пішло не так. Спробуйте ще раз.';
-
       if (error instanceof Error) {
         message = error.message;
       } else if (axios.isAxiosError(error)) {
@@ -60,12 +62,12 @@ export default function RegistrationForm() {
           error.response?.data?.error ||
           error.message;
       }
-
       toast.error(message);
     } finally {
       setSubmitting(false);
     }
   };
+
   return (
     <div className="container">
       <motion.h3
@@ -115,7 +117,6 @@ export default function RegistrationForm() {
                       meta.touched && meta.error ? css.errorInput : ''
                     }`}
                   />
-
                   <p className={css.error}>{meta.touched ? meta.error : ''}</p>
                 </>
               )}
@@ -144,7 +145,6 @@ export default function RegistrationForm() {
                       meta.touched && meta.error ? css.errorInput : ''
                     }`}
                   />
-
                   <p className={css.error}>{meta.touched ? meta.error : ''}</p>
                 </>
               )}
@@ -172,7 +172,6 @@ export default function RegistrationForm() {
                       meta.touched && meta.error ? css.errorInput : ''
                     }`}
                   />
-
                   <p className={css.error}>{meta.touched ? meta.error : ''}</p>
                 </>
               )}

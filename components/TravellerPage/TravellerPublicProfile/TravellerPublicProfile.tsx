@@ -13,10 +13,12 @@ interface TravellerData {
 
 interface TravellerPublicProfileProps {
   traveller: TravellerData;
+  totalArticles: number;
 }
 
 export default function TravellerPublicProfile({
   traveller,
+  totalArticles,
 }: TravellerPublicProfileProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
