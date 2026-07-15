@@ -7,7 +7,7 @@ export const TravellersListSkeleton = ({ count = 6 }: { count?: number }) => {
     <div className={style.travellersList}>
       <div>
         {Array.from({ length: count }).map((_, index) => (
-          <SkeletonCard key={index} className={css.travellerCard} />
+          <SkeletonCard key={index} className={css.card} />
         ))}
       </div>
     </div>

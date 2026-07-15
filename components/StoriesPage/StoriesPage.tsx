@@ -1,24 +1,37 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
+import {
+  addSavedArticle,
+  getCategories,
+  getSavedStories,
+  getStories,
+  removeSavedArticle,
+} from '@/lib/api/storyApi';
 import { PageTitle } from '@/components/ui/PageTitle/PageTitle';
 import LoaderComponent from '@/components/Loader/Loader';
 import MessageNoStories from '@/components/ui/MessageNoStories/MessageNoStories';
 import StoriesCategories from './CategoriesFilter/StoriesCategories';
-import StoriesGrid from './CategoriesFilter/StoriesGrid';
-import { getCategories, getStories } from '@/lib/api/storyApi';
 import { useAuthStore } from '@/lib/store/useAuthStore';
 import type { StoriesResponse } from '@/types/story';
 import styles from './StoriesPage.module.css';
+import StoriesGrid from './CategoriesFilter/StoriesGrid';
+import ErrorWhileSavingModal from '../ui/ErrorWhileSavingModal/ErrorWhileSavingModal';
 
 const STORIES_PER_PAGE = 9;
 
 export default function StoriesPage() {
   const [activeCategory, setActiveCategory] = useState('');
-  const [savedStoryIds, setSavedStoryIds] = useState<Set<string>>(new Set());
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const queryClient = useQueryClient();
 
   const categoriesQuery = useQuery({
     queryKey: ['story-categories'],
@@ -38,6 +51,46 @@ export default function StoriesPage() {
       lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
   });
 
+  const savedStoriesQuery = useQuery({
+    queryKey: ['saved-stories'],
+    queryFn: () => getSavedStories(1, 100),
+    enabled: isAuthenticated,
+  });
+
+  const saveStoryMutation = useMutation({
+    mutationFn: addSavedArticle,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['saved-stories'],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ['stories'],
+      });
+    },
+  });
+
+  const removeStoryMutation = useMutation({
+    mutationFn: removeSavedArticle,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['saved-stories'],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ['stories'],
+      });
+    },
+  });
+
+  const savedStoryIds = useMemo<Set<string>>(() => {
+    return new Set(
+      savedStoriesQuery.data?.data.map((story) => story._id) ?? [],
+    );
+  }, [savedStoriesQuery.data]);
+
   const stories = useMemo(() => {
     const mergedStories =
       storiesQuery.data?.pages.flatMap((page) => page.data) ?? [];
@@ -47,6 +100,23 @@ export default function StoriesPage() {
 
     return Array.from(uniqueStories.values());
   }, [storiesQuery.data]);
+
+  useEffect(() => {
+    console.log('Pages:', storiesQuery.data?.pages.length);
+
+    storiesQuery.data?.pages.forEach((page) => {
+      console.log(`Page ${page.page}:`, page.data.length, 'stories');
+    });
+
+    console.log(
+      'Merged:',
+      storiesQuery.data?.pages.flatMap((p) => p.data).length,
+    );
+
+    console.log('Rendered:', stories.length);
+
+    console.log('Backend totalItems:', storiesQuery.data?.pages[0]?.totalItems);
+  }, [storiesQuery.data, stories]);
 
   useEffect(() => {
     if (storiesQuery.isError) {
@@ -64,25 +134,23 @@ export default function StoriesPage() {
     }
   }, [categoriesQuery.error, categoriesQuery.isError]);
 
-  const handleSave = (storyId: string) => {
+  const handleSave = async (storyId: string) => {
     if (!isAuthenticated) {
-      toast.error('Увійдіть, щоб зберігати історії');
+      setIsErrorModalOpen(true);
       return;
     }
 
-    setSavedStoryIds((prev) => {
-      const next = new Set(prev);
-
-      if (next.has(storyId)) {
-        next.delete(storyId);
+    try {
+      if (savedStoryIds.has(storyId)) {
+        await removeStoryMutation.mutateAsync(storyId);
         toast.success('Історію прибрано зі збережених');
       } else {
-        next.add(storyId);
+        await saveStoryMutation.mutateAsync(storyId);
         toast.success('Історію додано до збережених');
       }
-
-      return next;
-    });
+    } catch {
+      toast.error('Не вдалося оновити збережені історії');
+    }
   };
 
   const isInitialLoading = storiesQuery.isLoading || categoriesQuery.isLoading;
@@ -144,6 +212,9 @@ export default function StoriesPage() {
             />
           )}
         </div>
+        {isErrorModalOpen && (
+          <ErrorWhileSavingModal onClose={() => setIsErrorModalOpen(false)} />
+        )}
       </div>
     </section>
   );

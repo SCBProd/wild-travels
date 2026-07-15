@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { logout } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/useAuthStore';
 import { toast } from 'react-hot-toast';
 import css from './userBar.module.css';
+import Link from 'next/link';
 
 type UserBarProps = {
   user?: {
@@ -24,6 +25,34 @@ export default function UserBar({ user }: UserBarProps) {
 
   const userName = user?.name || 'Користувач';
   const userAvatar = user?.avatar || '/Icons/avatar.svg';
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    if (!isModalOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsModalOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isModalOpen]);
 
   const openModal = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -49,10 +78,9 @@ export default function UserBar({ user }: UserBarProps) {
       setIsLoggingOut(false);
     }
   };
-
   return (
     <div className={css.wrapper}>
-      <div className={css.profileInfo}>
+      <Link href={'/profile'} className={css.profileInfo}>
         <Image
           src={userAvatar}
           alt="Аватар"
@@ -61,8 +89,8 @@ export default function UserBar({ user }: UserBarProps) {
           className={css.avatar}
           unoptimized
         />
-        <span className={css.name}>{userName}</span>
-      </div>
+        <span className={(css.name, css.navLink)}>{userName}</span>
+      </Link>
 
       <div className={css.divider}></div>
 

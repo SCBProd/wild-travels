@@ -13,29 +13,114 @@ const montserrat = Montserrat({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_API_URL;
-
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
 export const metadata: Metadata = {
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+
   title: {
-    template: '%s | Природні Мандри',
     default: 'Природні Мандри',
+    template: '%s | Природні Мандри',
   },
+
   description:
-    'Приєднуйтесь до спільноти мандрівників "Природні Мандри". Увійдіть або зареєструйтесь, щоб ділитися своїми історіями.',
+    'Спільнота мандрівників, де можна відкривати нові місця, ділитися власними історіями та знаходити натхнення для наступних подорожей.',
+
+  applicationName: 'Природні Мандри',
+
+  keywords: [
+    'мандри',
+    'подорожі',
+    'туризм',
+    'історії',
+    'природа',
+    'Україна',
+    'гори',
+    'ліс',
+    'маршрути',
+    'туристичні місця',
+  ],
+
+  authors: [
+    {
+      name: 'Природні Мандри',
+    },
+  ],
+
+  creator: 'Природні Мандри',
+
+  publisher: 'Природні Мандри',
+
+  robots: {
+    index: true,
+    follow: true,
+
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-video-preview': -1,
+      'max-snippet': -1,
+    },
+  },
+
+  alternates: {
+    canonical: '/',
+  },
+
+  icons: {
+    icon: [
+      {
+        url: '/favicon.ico',
+      },
+    ],
+
+    apple: [
+      {
+        url: '/apple-touch-icon.png',
+      },
+    ],
+
+    shortcut: ['/favicon.ico'],
+  },
+
   openGraph: {
-    title: 'Природні Мандри — Головна сторінка',
-    description:
-      'Мінімалістичний інтерфейс для входу та реєстрації у спільноті мандрівників.',
     type: 'website',
+
+    locale: 'uk_UA',
+
+    siteName: 'Природні Мандри',
+
+    title: 'Природні Мандри',
+
+    description:
+      'Спільнота мандрівників, де можна відкривати нові місця та ділитися власними історіями.',
+
+    url: '/',
+
     images: [
       {
         url: '/Hero.webp',
         width: 1200,
         height: 630,
-        alt: 'Природні Мандри Головна сторінка',
+        alt: 'Природні Мандри',
       },
     ],
   },
+
+  twitter: {
+    card: 'summary_large_image',
+
+    title: 'Природні Мандри',
+
+    description:
+      'Спільнота мандрівників, де можна відкривати нові місця та ділитися власними історіями.',
+
+    images: ['/Hero.webp'],
+  },
+
+  category: 'travel',
 };
 
 export const metadataBase = siteUrl ? new URL(siteUrl) : undefined;
