@@ -8,7 +8,7 @@ export default function ProfileTabs() {
   const isMyStoriesActive = pathname.includes('/profile/my');
   const isSavedStoriesActive = !isMyStoriesActive;
 
-  return (
+  return ( 
     <div className={css.container}>
       <div className={css.profiletabs}>
         <button type="button" className={`${css.tabButton} ${isSavedStoriesActive ? css.active : ''}`}
