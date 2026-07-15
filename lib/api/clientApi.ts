@@ -189,3 +189,31 @@ export async function unsaveStory(storyId: string): Promise<SaveStoryResponse> {
     throw new Error('Щось пішло не так. Спробуйте пізніше.');
   }
 }
+export async function updateAvatar(formData: FormData): Promise<User> {
+  try {
+    const response = await nextServer.patch<User>(
+      '/api/profile/avatar',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      const serverMessage =
+        error.response?.data?.message || error.message;
+
+      throw new Error(serverMessage || 'Не вдалося оновити аватар');
+    }
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error('Щось пішло не так при оновленні аватара');
+  }
+}
