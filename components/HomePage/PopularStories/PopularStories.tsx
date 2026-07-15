@@ -20,6 +20,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 
 import styles from './PopularStories.module.css';
+import ErrorWhileSavingModal from '@/components/ui/ErrorWhileSavingModal/ErrorWhileSavingModal';
 
 const swiperOptions = {
   modules: [Navigation],
@@ -47,6 +48,7 @@ const swiperOptions = {
 
 export default function PopularStories() {
   const router = useRouter();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [savedOverrides, setSavedOverrides] = useState<Record<string, boolean>>(
     {},
@@ -73,7 +75,7 @@ export default function PopularStories() {
 
   const handleSave = async (storyId: string) => {
     if (!isAuthenticated) {
-      toast.error('Увійдіть, щоб зберігати статті');
+      setIsAuthModalOpen(true);
       return;
     }
 
@@ -164,6 +166,9 @@ export default function PopularStories() {
             Всі статті
           </Button>
         </div>
+        {isAuthModalOpen && (
+          <ErrorWhileSavingModal onClose={() => setIsAuthModalOpen(false)} />
+        )}
       </div>
     </section>
   );
