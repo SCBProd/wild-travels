@@ -7,19 +7,19 @@ import clsx from 'clsx';
 import css from './footer.module.css';
 import { Icon } from '@/components/ui/Icon/Icon';
 
-
 export default function Footer() {
   const pathname = usePathname();
 
-  const isAuthPage =
-    pathname === '/login' || pathname === '/register';
+  const isAuthPage = pathname === '/login' || pathname === '/register';
 
   if (isAuthPage) {
     return (
       <footer className={css.footerAuth}>
         <div className={`container ${css.footerContainerAuth}`}>
           <p className={clsx(css.copyright, css.authCopyright)}>
-            © {new Date().getFullYear()} Природні Мандри. Усі права захищені.
+            © {new Date().getFullYear()}{' '}
+            <span className={css.mobileText}>Подорожники</span>
+            <span className={css.desktopText}>Природні Мандри</span>
           </p>
         </div>
       </footer>

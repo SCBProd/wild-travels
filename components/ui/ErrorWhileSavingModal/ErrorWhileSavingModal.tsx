@@ -1,34 +1,38 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import Link from "next/link";
+import { useEffect } from 'react';
+import Link from 'next/link';
 
-import { Icon } from "../Icon/Icon"
-import css from "./ErrorWhileSavingModal.module.css";
-import { PageTitle } from "../PageTitle/PageTitle";
+import { Icon } from '@/components/ui/Icon/Icon';
+import css from './ErrorWhileSavingModal.module.css';
+import { PageTitle } from '@/components/ui/PageTitle/PageTitle';
 
 type Props = {
   onClose: () => void;
 };
 
 export default function ErrorWhileSavingModal({ onClose }: Props) {
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    };
+useEffect(() => {
+  // Блокуємо прокрутку сторінки
+  document.body.style.overflow = 'hidden';
 
-    window.addEventListener("keydown", handleEsc);
+  const handleEsc = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
 
-    return () => {
-      window.removeEventListener("keydown", handleEsc);
-    };
-  }, [onClose]);
+  window.addEventListener('keydown', handleEsc);
 
-  const handleBackdrop = (
-    e: React.MouseEvent<HTMLDivElement>
-  ) => {
+  return () => {
+    // Повертаємо прокрутку
+    document.body.style.overflow = '';
+
+    window.removeEventListener('keydown', handleEsc);
+  };
+}, [onClose]);
+
+  const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
@@ -37,11 +41,7 @@ export default function ErrorWhileSavingModal({ onClose }: Props) {
   return (
     <div className={css.backdrop} onClick={handleBackdrop}>
       <div className={css.modal}>
-        <button
-          className={css.closeBtn}
-          onClick={onClose}
-          type="button"
-        >
+        <button className={css.closeBtn} onClick={onClose} type="button">
           <Icon name="icon-close" width={24} height={24} />
         </button>
 
@@ -50,24 +50,16 @@ export default function ErrorWhileSavingModal({ onClose }: Props) {
         </PageTitle>
 
         <p className={css.text}>
-          Щоб зберегти статтю вам треба увійти, якщо ще немає
-          облікового запису зареєструйтесь
+          Щоб зберегти статтю вам треба увійти, якщо ще немає облікового запису
+          зареєструйтесь
         </p>
 
         <div className={css.actions}>
-          <Link
-            href="/login"
-            className={css.loginBtn}
-            onClick={onClose}
-          >
+          <Link href="/login" className={css.loginBtn} onClick={onClose}>
             Увійти
           </Link>
 
-          <Link
-            href="/register"
-            className={css.registerBtn}
-            onClick={onClose}
-          >
+          <Link href="/register" className={css.registerBtn} onClick={onClose}>
             Зарєєструватись
           </Link>
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -8,18 +8,69 @@ import css from './header.module.css';
 
 import AuthBar from '../AuthBar/AuthBar';
 import UserBar from '../UserBar/UserBar';
+import { checkSession, getMe } from '@/lib/api/clientApi';
+import { useAuthStore } from '@/lib/store/useAuthStore';
 
 export default function Header() {
   const pathname = usePathname();
   const [isBurgerOpen, setIsBurgerOpen] = useState(false);
 
-  const isAuthPage = pathname === '/login' || pathname === '/register';
-  const isAuthorized = true;
+  const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
+  const clearIsAuthenticated = useAuthStore(
+    (state) => state.clearIsAuthenticated,
+  );
 
-  const mockUser = { name: 'Name' };
+  const isAuthorized = !!user;
 
   const toggleBurger = () => setIsBurgerOpen(!isBurgerOpen);
   const closeBurger = () => setIsBurgerOpen(false);
+
+  const verifyAuth = useCallback(async () => {
+    const hasCookies =
+      typeof document !== 'undefined' && document.cookie.length > 0;
+
+    if (!hasCookies) {
+      clearIsAuthenticated();
+      return;
+    }
+
+    try {
+      const loggedIn = await checkSession();
+      if (loggedIn) {
+        if (!user) {
+          const userData = await getMe();
+          setUser(userData);
+        }
+      } else {
+        clearIsAuthenticated();
+      }
+    } catch (error) {
+      console.error('Помилка авторизації:', error);
+      clearIsAuthenticated();
+    }
+  }, [user, setUser, clearIsAuthenticated]);
+
+  useEffect(() => {
+    const runVerification = async () => {
+      await verifyAuth();
+    };
+    runVerification();
+  }, [pathname, verifyAuth]);
+
+  useEffect(() => {
+    const handleAuthChange = async () => {
+      await verifyAuth();
+    };
+
+    window.addEventListener('storage', handleAuthChange);
+    window.addEventListener('focus', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('storage', handleAuthChange);
+      window.removeEventListener('focus', handleAuthChange);
+    };
+  }, [verifyAuth]);
 
   useEffect(() => {
     if (isBurgerOpen) {
@@ -38,7 +89,7 @@ export default function Header() {
     { name: 'Еко-Мандрівники', href: '/travellers' },
   ];
 
-  if (isAuthPage) {
+  if (pathname === '/login' || pathname === '/register') {
     return null;
   }
 
@@ -61,7 +112,9 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`${css.navLink} ${pathname === link.href ? css.activeLink : ''}`}
+              className={`${css.navLink} ${
+                pathname === link.href ? css.activeLink : ''
+              }`}
             >
               {link.name}
             </Link>
@@ -69,7 +122,9 @@ export default function Header() {
           {isAuthorized && (
             <Link
               href="/profile"
-              className={`${css.navLink} ${pathname === '/profile' ? css.activeLink : ''}`}
+              className={`${css.navLink} ${
+                pathname === '/profile' ? css.activeLink : ''
+              }`}
             >
               Мій Профіль
             </Link>
@@ -86,11 +141,11 @@ export default function Header() {
               <button
                 className={css.burgerButton}
                 onClick={toggleBurger}
-                aria-label="Меню"
+                aria-label="Menu"
               >
                 <Image
                   src={isBurgerOpen ? '/Icons/close.svg' : '/Icons/menu.svg'}
-                  alt="Меню"
+                  alt="Menu"
                   className={css.burgerIcon}
                   width={24}
                   height={24}
@@ -106,17 +161,17 @@ export default function Header() {
               </div>
 
               <div className={css.userProfileHeaderHiddenTablet}>
-                <UserBar user={mockUser} />
+                <UserBar user={user} />
               </div>
 
               <button
                 className={css.burgerButton}
                 onClick={toggleBurger}
-                aria-label="Меню"
+                aria-label="Menu"
               >
                 <Image
                   src={isBurgerOpen ? '/Icons/close.svg' : '/Icons/menu.svg'}
-                  alt="Меню"
+                  alt="Menu"
                   className={css.burgerIcon}
                   width={24}
                   height={24}
@@ -127,7 +182,9 @@ export default function Header() {
         </div>
 
         <div
-          className={`${css.burgerMenu} ${isBurgerOpen ? css.burgerMenuOpen : ''}`}
+          className={`${css.burgerMenu} ${
+            isBurgerOpen ? css.burgerMenuOpen : ''
+          }`}
         >
           <div className={css.burgerMenuContent}>
             <nav className={css.burgerNav}>
@@ -144,9 +201,11 @@ export default function Header() {
             </nav>
             <div className={css.burgerFooter}>
               {!isAuthorized ? (
-                <div className={css.burgerMobileActionOnly}>
-                  <AuthBar />
-                </div>
+                isBurgerOpen && (
+                  <div className={css.burgerMobileActionOnly}>
+                    <AuthBar />
+                  </div>
+                )
               ) : (
                 <>
                   <div className={css.burgerMobileActionOnly}>
@@ -159,7 +218,7 @@ export default function Header() {
                     </Link>
                   </div>
                   <div className={css.burgerUserProfileCentered}>
-                    <UserBar user={mockUser} />
+                    <UserBar user={user} />
                   </div>
                 </>
               )}

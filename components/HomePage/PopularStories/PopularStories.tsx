@@ -48,9 +48,9 @@ const swiperOptions = {
 export default function PopularStories() {
   const router = useRouter();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [savedOverrides, setSavedOverrides] = useState<
-    Record<string, boolean>
-  >({});
+  const [savedOverrides, setSavedOverrides] = useState<Record<string, boolean>>(
+    {},
+  );
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['popular-stories'],

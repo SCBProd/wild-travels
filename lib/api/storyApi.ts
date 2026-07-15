@@ -4,6 +4,7 @@ import type {
   CategoriesResponse,
   Story,
   StoriesResponse,
+  NewStory,
 } from "@/types/story";
 
 type GetStoriesParams = {
@@ -233,7 +234,6 @@ export const removeSavedArticle = async (storyId: string) => {
   return data;
 };
 
-
 export const GetSavedStories = async(page:number,perPage:number) =>{
   const {data} = await nextServer.get('/api/profile/saved-stories', {
       params: {
@@ -248,3 +248,18 @@ export const GetSavedStories = async(page:number,perPage:number) =>{
     data: enrichedStories,
   };
 }
+
+export const createNewStory = async (data: NewStory): Promise<Story> => {
+  const formData = new FormData();
+  formData.append("img", data.img);
+  formData.append("title", data.title);
+  formData.append("category", data.category);
+  formData.append("article", data.article);
+
+  const res = await nextServer.post<Story>(
+    "/api/stories/new-story",
+    formData
+  );
+
+  return res.data;
+};

@@ -12,10 +12,7 @@ type Props = {
   onSave?: (id: string) => void;
 };
 
-export const RecommendedStories = ({
-  stories,
-  onSave,
-}: Props) => {
+export const RecommendedStories = ({ stories, onSave }: Props) => {
   const [visibleCount, setVisibleCount] = useState(1);
 
   useEffect(() => {
@@ -44,17 +41,11 @@ export const RecommendedStories = ({
 
   return (
     <section className={css.section}>
-      <PageTitle className={css.title}>
-        Вам також сподобається
-      </PageTitle>
+      <PageTitle className={css.title}>Вам також сподобається</PageTitle>
 
       <div className={css.list}>
         {stories.slice(0, visibleCount).map((story) => (
-          <StoryCard
-            key={story._id}
-            story={story}
-            onSave={onSave}
-          />
+          <StoryCard key={story._id} story={story} onSave={onSave} />
         ))}
       </div>
     </section>
