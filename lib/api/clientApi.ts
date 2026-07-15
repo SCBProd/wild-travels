@@ -155,7 +155,7 @@ export type SaveStoryResponse = {
 export async function saveStory(storyId: string): Promise<SaveStoryResponse> {
   try {
     const response = await nextServer.post<SaveStoryResponse>(
-      `/api/stories/${storyId}/save`,
+      `/api/users/savedArticles/${storyId}`,
     );
     return response.data;
   } catch (error: unknown) {
@@ -173,7 +173,7 @@ export async function saveStory(storyId: string): Promise<SaveStoryResponse> {
 export async function unsaveStory(storyId: string): Promise<SaveStoryResponse> {
   try {
     const response = await nextServer.delete<SaveStoryResponse>(
-      `/api/stories/${storyId}/save`,
+      `/api/users/savedArticles/${storyId}`,
     );
     return response.data;
   } catch (error: unknown) {
