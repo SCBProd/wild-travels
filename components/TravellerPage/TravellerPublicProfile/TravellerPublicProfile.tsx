@@ -36,7 +36,7 @@ export default function TravellerPublicProfile({
     if (!file) return;
 
     const formData = new FormData();
-    formData.append('avatar', file);
+    formData.append('avatarUrl', file);
 
     try {
       const response = await updateAvatar(formData);
