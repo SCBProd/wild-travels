@@ -13,10 +13,12 @@ interface TravellerData {
 
 interface TravellerPublicProfileProps {
   traveller: TravellerData;
+  totalArticles: number;
 }
 
 export default function TravellerPublicProfile({
   traveller,
+  totalArticles,
 }: TravellerPublicProfileProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -82,7 +84,7 @@ export default function TravellerPublicProfile({
           </h2>
 
           <p className={css.count}>
-            Статей: {traveller.articlesAmount ?? 0}
+            Статей: {totalArticles}
           </p>
         </div>
       </div>
