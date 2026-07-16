@@ -245,11 +245,6 @@ export async function updateAvatar(
     const response = await nextServer.patch<UpdateAvatarResponse>(
       '/api/profile/avatar',
       formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      },
     );
 
     return response.data;
