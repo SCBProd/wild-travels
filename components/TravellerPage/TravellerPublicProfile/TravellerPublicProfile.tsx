@@ -13,12 +13,10 @@ interface TravellerData {
 
 interface TravellerPublicProfileProps {
   traveller: TravellerData;
-  totalArticles: number;
 }
 
 export default function TravellerPublicProfile({
   traveller,
-  totalArticles,
 }: TravellerPublicProfileProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -39,9 +37,9 @@ export default function TravellerPublicProfile({
     formData.append('avatar', file);
 
     try {
-      const updatedUser = await updateAvatar(formData);
+      const response = await updateAvatar(formData);
 
-      setAvatar(updatedUser.avatarUrl);
+      setAvatar(response.url);
     } catch (error) {
       console.error('Avatar update error:', error);
     } finally {
@@ -55,7 +53,6 @@ export default function TravellerPublicProfile({
         <div
           className={css.avatarWrapper}
           onClick={handleAvatarClick}
-          style={{ cursor: 'pointer' }}
         >
           <Image
             width={145}
@@ -80,7 +77,9 @@ export default function TravellerPublicProfile({
         </div>
 
         <div className={css.meta}>
-          <h2 className={css.name}>{traveller.name}</h2>
+          <h2 className={css.name}>
+            {traveller.name}
+          </h2>
 
           <p className={css.count}>
             Статей: {traveller.articlesAmount ?? 0}
