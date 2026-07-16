@@ -195,7 +195,6 @@ export async function unsaveStory(
     throw new Error('Щось пішло не так. Спробуйте пізніше.');
   }
 }
-
 export async function updateAvatar(formData: FormData): Promise<User> {
   try {
     const response = await nextServer.patch<User>(
