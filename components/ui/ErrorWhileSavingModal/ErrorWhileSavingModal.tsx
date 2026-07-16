@@ -12,19 +12,25 @@ type Props = {
 };
 
 export default function ErrorWhileSavingModal({ onClose }: Props) {
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
+useEffect(() => {
+  // Блокуємо прокрутку сторінки
+  document.body.style.overflow = 'hidden';
 
-    window.addEventListener('keydown', handleEsc);
+  const handleEsc = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
 
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, [onClose]);
+  window.addEventListener('keydown', handleEsc);
+
+  return () => {
+    // Повертаємо прокрутку
+    document.body.style.overflow = '';
+
+    window.removeEventListener('keydown', handleEsc);
+  };
+}, [onClose]);
 
   const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
