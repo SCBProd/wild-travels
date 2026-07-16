@@ -23,20 +23,20 @@ export const getMe = async (): Promise<User> => {
         const retryResponse = await nextServer.get<User>('/api/profile/me');
 
         return retryResponse.data;
-      } catch  {
+      } catch {
         throw new Error('Сесія закінчилася. Увійдіть знову.');
       }
     }
 
-    // Безпечно витягуємо повідомлення без any
     let message = 'Не вдалося завантажити профіль';
 
     if (
       axiosError.response?.data &&
       typeof axiosError.response.data === 'object'
     ) {
-      const data = axiosError.response.data as Record<string, any>;
-      message = data.message || data.error || message;
+      const data = axiosError.response.data as Record<string, unknown>;
+      const maybeMessage = (data.message as string | undefined) || (data.error as string | undefined);
+      message = maybeMessage || message;
     } else if (axiosError.message) {
       message = axiosError.message;
     } else if (error instanceof Error) {
@@ -107,7 +107,9 @@ export const logout = async (): Promise<void> => {
   await nextServer.post('/api/auth/logout');
 };
 
-export async function getTravellers(page: number): Promise<TravellersResponse> {
+export async function getTravellers(
+  page: number,
+): Promise<TravellersResponse> {
   try {
     const response = await nextServer.get<TravellersResponse>(
       `/api/travellers?page=${page}&perPage=12`,
@@ -152,7 +154,9 @@ export type SaveStoryResponse = {
   savedCount?: number;
 };
 
-export async function saveStory(storyId: string): Promise<SaveStoryResponse> {
+export async function saveStory(
+  storyId: string,
+): Promise<SaveStoryResponse> {
   try {
     const response = await nextServer.post<SaveStoryResponse>(
       `/api/users/savedArticles/${storyId}`,
@@ -170,7 +174,9 @@ export async function saveStory(storyId: string): Promise<SaveStoryResponse> {
   }
 }
 
-export async function unsaveStory(storyId: string): Promise<SaveStoryResponse> {
+export async function unsaveStory(
+  storyId: string,
+): Promise<SaveStoryResponse> {
   try {
     const response = await nextServer.delete<SaveStoryResponse>(
       `/api/users/savedArticles/${storyId}`,
@@ -187,5 +193,32 @@ export async function unsaveStory(storyId: string): Promise<SaveStoryResponse> {
       throw error;
     }
     throw new Error('Щось пішло не так. Спробуйте пізніше.');
+  }
+}
+
+export async function updateAvatar(formData: FormData): Promise<User> {
+  try {
+    const response = await nextServer.patch<User>(
+      '/api/profile/avatar',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      const serverMessage = error.response?.data?.message || error.message;
+      throw new Error(serverMessage || 'Не вдалося оновити аватар');
+    }
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error('Щось пішло не так при оновленні аватара');
   }
 }
