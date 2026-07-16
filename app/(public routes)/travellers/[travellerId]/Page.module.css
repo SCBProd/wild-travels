@@ -1,11 +1,14 @@
 .pageContainer {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .messageWrapper {
+  flex-grow: 1;
   margin-bottom: 64px;
 }
-
 .title {
   font-size: 28px;
   letter-spacing: -0.01em;
