@@ -234,19 +234,28 @@ export async function unsaveStory(
   }
 }
 
-export type UpdateAvatarResponse = {
-  url: string;
-};
+export async function updateAvatar(
+  formData: FormData,
+): Promise<{ url: string }> {
+  try {
+    const response = await nextServer.patch<{ url: string }>(
+      '/api/profile/avatar',
+      formData,
+    );
 
-export async function updateAvatar(file: File): Promise<User> {
-  const formData = new FormData();
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof AxiosError) {
+      const serverMessage =
+        error.response?.data?.message || error.message;
 
-  formData.append('avatarUrl', file);
+      throw new Error(serverMessage || 'Не вдалося оновити аватар');
+    }
 
-  const response = await nextServer.patch<User>(
-    '/api/profile/avatar',
-    formData
-  );
+    if (error instanceof Error) {
+      throw error;
+    }
 
-  return response.data;
+    throw new Error('Помилка оновлення аватара');
+  }
 }
