@@ -1,6 +1,6 @@
-import { PageTitle } from "@/components/UI/PageTitle/PageTitle";
-import SaveStoryButton from "@/components/UI/SaveStoryButton/SaveStoryButton";
-import css from "./SaveStory.module.css";
+import { PageTitle } from '@/components/ui/PageTitle/PageTitle';
+import { SaveButton } from '@/components/ui/SaveStoryButton/SaveStoryButton';
+import css from './SaveStory.module.css';
 
 type Props = {
   isSaved: boolean;
@@ -8,11 +8,7 @@ type Props = {
   onSave: () => void;
 };
 
-export default function SaveStory({
-  isSaved,
-  isLoading,
-  onSave,
-}: Props) {
+export default function SaveStory({ isSaved, isLoading, onSave }: Props) {
   return (
     <section className={css.section}>
       <PageTitle tag="h2" className={css.title}>
@@ -23,11 +19,7 @@ export default function SaveStory({
         Вона буде доступна у вашому профілі у розділі збережене
       </p>
 
-      <SaveStoryButton
-        isSaved={isSaved}
-        isLoading={isLoading}
-        onClick={onSave}
-      />
+      <SaveButton isSaved={isSaved} isLoading={isLoading} onClick={onSave} />
     </section>
   );
 }

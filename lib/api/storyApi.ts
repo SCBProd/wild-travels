@@ -1,11 +1,10 @@
 import { nextServer } from "./api";
-import axios from "axios";
-
+import {AxiosError} from "axios";
 import type {
   CategoriesResponse,
   Story,
-  StoryResponse,
   StoriesResponse,
+  NewStory,
 } from "@/types/story";
 
 type GetStoriesParams = {
@@ -45,7 +44,7 @@ async function getTravellerProfile(id: string) {
   return user;
 }
 
-async function enrichStoriesWithOwners(
+export async function enrichStoriesWithOwners(
   stories: Story[]
 ): Promise<Story[]> {
   const ownerIds = Array.from(
@@ -116,6 +115,16 @@ export const getStories = async ({
       }
     );
 
+    console.log("=== STORIES FROM API ===");
+  response.data.data.forEach((story: Story) => {
+    console.log({
+      id: story._id,
+      title: story.title,
+      isSaved: story.isSaved,
+      savedCount: story.savedCount,
+    });
+  });
+
   const enrichedStories = await enrichStoriesWithOwners(
     response.data.data
   );
@@ -136,44 +145,30 @@ export const getCategories = async (): Promise<CategoriesResponse> => {
 
 
 export const getStoryById = async (id: string) => {
-  const response = await axios.get(
-    `https://wild-travels-backend.onrender.com/api/stories/${id}`
-  );
-
+  const response = await nextServer.get(`/api/stories/${id}`);
 
   console.log("FULL STORY RESPONSE:", response.data);
 
-
   const story = response.data.story ?? response.data;
 
-
-  const [enrichedStory] = await enrichStoriesWithOwners([
-    story,
-  ]);
-
+  const [enrichedStory] = await enrichStoriesWithOwners([story]);
 
   const categoriesResponse = await getCategories();
-
 
   const categoryId =
     typeof enrichedStory.category === "string"
       ? enrichedStory.category
       : enrichedStory.category._id;
 
-
   const category = categoriesResponse.data.find(
     (item) => item._id === categoryId
   );
 
-
   return {
     ...response.data,
-
     story: {
       ...enrichedStory,
-
-      category:
-        category ?? enrichedStory.category,
+      category: category ?? enrichedStory.category,
     },
   };
 };
@@ -195,9 +190,76 @@ export const getRecommendedStories = async (
   });
 
 
-  return response.data
-    .filter(
-      (item) => item._id !== story._id
-    )
-    .slice(0, 3);
+return response.data
+  .filter(
+    (item) => item._id !== story._id
+  )
+  .slice(0, 3)
+  .map((item) => ({
+    ...item,
+    isSaved: item.isSaved ?? false,
+  }));
+};
+
+// export const addSavedArticle = async (storyId: string) => {
+//   const { data } = await nextServer.post(
+//     `/api/profile/savedArticles/${storyId}`
+//   );
+
+//   return data;
+// };
+
+export const addSavedArticle = async (storyId: string) => {
+  try {
+    const { data } = await nextServer.post(
+      `/api/profile/savedArticles/${storyId}`
+    );
+
+    return data;
+  } catch (error) {
+    const err = error as AxiosError;
+
+    console.log("STATUS:", err.response?.status);
+    console.log("RESPONSE:", err.response?.data);
+
+    throw error;
+  }
+};
+
+export const removeSavedArticle = async (storyId: string) => {
+  const { data } = await nextServer.delete(
+    `/api/profile/savedArticles/${storyId}`
+  );
+
+  return data;
+};
+
+export const GetSavedStories = async(page:number,perPage:number) =>{
+  const {data} = await nextServer.get('/api/profile/saved-stories', {
+      params: {
+        page,
+        perPage,
+      },
+      withCredentials:true,
+  });
+    const enrichedStories = await enrichStoriesWithOwners(data.data);
+    return {
+    ...data,
+    data: enrichedStories,
+  };
+}
+
+export const createNewStory = async (data: NewStory): Promise<Story> => {
+  const formData = new FormData();
+  formData.append("img", data.img);
+  formData.append("title", data.title);
+  formData.append("category", data.category);
+  formData.append("article", data.article);
+
+  const res = await nextServer.post<Story>(
+    "/api/stories/new-story",
+    formData
+  );
+
+  return res.data;
 };

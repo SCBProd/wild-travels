@@ -1,4 +1,4 @@
-import StoryCard from '@/components/UI/StoryCard/StoryCard';
+import StoryCard from '@/components/ui/StoryCard/StoryCard';
 import type { Story } from '@/types/story';
 import styles from './StoriesGrid.module.css';
 
@@ -8,11 +8,7 @@ type Props = {
   onSave: (id: string) => void;
 };
 
-export default function StoriesGrid({
-  stories,
-  savedStoryIds,
-  onSave,
-}: Props) {
+export default function StoriesGrid({ stories, savedStoryIds, onSave }: Props) {
   return (
     <div className={styles.grid}>
       {stories.map((story, index) => (

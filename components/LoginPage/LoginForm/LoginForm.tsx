@@ -1,6 +1,6 @@
 'use client';
 
-import { userLogin } from '@/lib/api/clientApi';
+import { userLogin, getMe } from '@/lib/api/clientApi';
 import css from './LoginForm.module.css';
 import { useRouter } from 'next/navigation';
 import * as Yup from 'yup';
@@ -16,6 +16,7 @@ const initialValues: UserLogin = {
   password: '',
   email: '',
 };
+
 const loginValidationSchema = Yup.object().shape({
   email: Yup.string().email('Невірний формат пошти').required(),
   password: Yup.string().min(8).required(),
@@ -24,17 +25,17 @@ const loginValidationSchema = Yup.object().shape({
 export default function LoginForm() {
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
+
   const handleSubmit = async (
     values: UserLogin,
     { setSubmitting }: FormikHelpers<UserLogin>,
   ) => {
     try {
-      const user = await userLogin(values);
+      await userLogin(values);
+      const fullUserData = await getMe();
+      setUser(fullUserData);
 
       toast.success('Успішний вхід');
-
-      setUser(user);
-
       router.push('/');
     } catch (error) {
       let message = 'Щось пішло не так. Спробуйте ще раз.';
@@ -53,6 +54,7 @@ export default function LoginForm() {
       setSubmitting(false);
     }
   };
+
   return (
     <>
       <div className="container">
@@ -99,7 +101,9 @@ export default function LoginForm() {
                       id="email"
                       autoComplete="email"
                       type="email"
-                      className={`${css.input} ${meta.touched && meta.error ? css.errorInput : ''}`}
+                      className={`${css.input} ${
+                        meta.touched && meta.error ? css.errorInput : ''
+                      }`}
                     />
 
                     <p className={css.error}>
@@ -128,7 +132,9 @@ export default function LoginForm() {
                       {...field}
                       id="password"
                       type="password"
-                      className={`${css.input} ${meta.touched && meta.error ? css.errorInput : ''}`}
+                      className={`${css.input} ${
+                        meta.touched && meta.error ? css.errorInput : ''
+                      }`}
                     />
 
                     <p className={css.error}>

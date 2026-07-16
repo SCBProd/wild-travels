@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { CustomLink } from '@/components/UI/Link/Link';
 import { useAuthStore } from '@/lib/store/useAuthStore';
 import styles from './join.module.css';
 
@@ -22,9 +22,9 @@ export default function Join() {
           сталих мандрів та натхнення для нових маршрутів Україною.
         </p>
 
-        <Link href={linkHref} className={styles.button}>
+        <CustomLink href={linkHref} className={styles.button}>
           {linkText}
-        </Link>
+        </CustomLink>
       </div>
     </section>
   );
