@@ -2,11 +2,24 @@
 
 export async function PATCH(req: Request) {
   try {
-    console.log('START AVATAR PATCH');
+    const incomingFormData = await req.formData();
 
-    const formData = await req.formData();
+    const file = incomingFormData.get('avatarUrl');
 
-    console.log('FORM DATA OK');
+    if (!(file instanceof File)) {
+      return Response.json(
+        { message: 'Avatar file is required' },
+        { status: 400 },
+      );
+    }
+
+    const formData = new FormData();
+
+    formData.append(
+      'avatarUrl',
+      file,
+      file.name,
+    );
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/profile/avatar`,
@@ -19,13 +32,9 @@ export async function PATCH(req: Request) {
       },
     );
 
-    console.log('BACKEND STATUS:', response.status);
+    const data = await response.text();
 
-    const text = await response.text();
-
-    console.log('BACKEND RESPONSE:', text);
-
-    return new Response(text, {
+    return new Response(data, {
       status: response.status,
       headers: {
         'Content-Type': 'application/json',
@@ -33,12 +42,11 @@ export async function PATCH(req: Request) {
     });
 
   } catch (error) {
-    console.error('AVATAR ERROR:', error);
+    console.error(error);
 
     return Response.json(
       {
         message: 'Avatar upload failed',
-        error: error instanceof Error ? error.message : error,
       },
       {
         status: 500,
