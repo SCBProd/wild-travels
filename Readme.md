@@ -207,7 +207,8 @@ src/
 | Vladislav Gradoblyanskyi | **Developer**    | [@vladislavgradoblyanskyi](https://github.com/vladislavgradoblyanskyi) |
 | Den Yaseniuk             | **Developer**    | [@luxqxqm](https://github.com/luxqxqm)                                 |
 | Galyna Kud               | **Developer**    | [@Galyna-kud](https://github.com/Galyna-kud)                           |
-| Dariia                   | **Developer**    | [@ccnvxii](https://github.com/ccnvxii)                                 |
+| Dariia Rossokha          | **Developer**    | [@ccnvxii](https://github.com/ccnvxii)                                 |
+| Tkachenko Viktoriia      | **Developer**    | [@viktoriiatkachenko](https://github.com/viktoriiatkachenko)           |
 
 # Contributors
 
