@@ -1,6 +1,6 @@
 'use client';
 
-import { CustomLink } from '@/components/ui/Link/Link';
+import { CustomLink } from '@/components/UI/Link/Link';
 import { useAuthStore } from '@/lib/store/useAuthStore';
 import styles from './join.module.css';
 
@@ -12,22 +12,21 @@ export default function Join() {
   return (
     <section className={styles.join} id="join">
       <div className={styles.container}>
-        <h2 className={styles.title}>
-          Приєднуйся до спільноти свідомих мандрівників
-        </h2>
+        <div className={styles.content}>
+          <h2 className={styles.title}>
+            Приєднуйся до спільноти свідомих мандрівників
+          </h2>
 
-        <p className={styles.description}>
-          Стань частиною ком&apos;юніті, де подорожі стають не лише пригодою, а
-          й внеском у збереження природи. Тут ти знайдеш однодумців, поради для
-          сталих мандрів та натхнення для нових маршрутів Україною.
-        </p>
+          <p className={styles.description}>
+            Стань частиною ком&apos;юніті, де подорожі стають не лише пригодою,
+            а й внеском у збереження природи. Тут ти знайдеш однодумців, поради
+            для сталих мандрів та натхнення для нових маршрутів Україною.
+          </p>
 
-        <CustomLink
-  href={linkHref}
-  className={styles.button}
->
-  {linkText}
-</CustomLink>
+          <CustomLink href={linkHref} className={styles.button}>
+            {linkText}
+          </CustomLink>
+        </div>
       </div>
     </section>
   );
