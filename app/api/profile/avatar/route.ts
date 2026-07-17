@@ -4,19 +4,23 @@ export async function PATCH(req: Request) {
   try {
     const incomingFormData = await req.formData();
 
-    const file = incomingFormData.get('avatarUrl');
+    const file = incomingFormData.get('avatar');
 
     if (!(file instanceof File)) {
       return Response.json(
-        { message: 'Avatar file is required' },
-        { status: 400 },
+        {
+          message: 'Avatar file is required',
+        },
+        {
+          status: 400,
+        },
       );
     }
 
     const formData = new FormData();
 
     formData.append(
-      'avatarUrl',
+      'avatar',
       file,
       file.name,
     );
@@ -25,7 +29,9 @@ export async function PATCH(req: Request) {
       `${process.env.NEXT_PUBLIC_API_URL}/api/profile/avatar`,
       {
         method: 'PATCH',
+
         body: formData,
+
         headers: {
           cookie: req.headers.get('cookie') ?? '',
         },
@@ -34,15 +40,22 @@ export async function PATCH(req: Request) {
 
     const data = await response.text();
 
-    return new Response(data, {
-      status: response.status,
-      headers: {
-        'Content-Type': 'application/json',
+    return new Response(
+      data,
+      {
+        status: response.status,
+
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
 
   } catch (error) {
-    console.error(error);
+    console.error(
+      'Avatar upload failed:',
+      error,
+    );
 
     return Response.json(
       {
