@@ -1,6 +1,6 @@
 'use client';
 
-import { CustomLink } from '@/components/UI/Link/Link';
+import { CustomLink } from '@/components/ui/Link/Link';
 import { useAuthStore } from '@/lib/store/useAuthStore';
 import styles from './join.module.css';
 
