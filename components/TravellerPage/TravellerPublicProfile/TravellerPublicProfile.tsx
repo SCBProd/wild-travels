@@ -36,14 +36,23 @@ export default function TravellerPublicProfile({
     if (!file) return;
 
     const formData = new FormData();
-    formData.append('avatarUrl', file);
+
+    formData.append(
+      'avatar',
+      file,
+    );
 
     try {
       const response = await updateAvatar(formData);
 
       setAvatar(response.url);
+
     } catch (error) {
-      console.error('Avatar update error:', error);
+      console.error(
+        'Avatar update error:',
+        error,
+      );
+
     } finally {
       event.target.value = '';
     }

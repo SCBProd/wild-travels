@@ -1,35 +1,66 @@
-export const dynamic = 'force-dynamic';
+// app/api/profile/avatar/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
-import { api } from '../../api';
-import { cookies } from 'next/headers';
-
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: Request) {
   try {
-    const cookieStore = await cookies();
+    const incomingFormData = await req.formData();
 
-    // Беремо оригінальний FormData і передаємо далі БЕЗ змін
-    const formData = await req.formData();
+    const file = incomingFormData.get('avatar');
 
-    const { data } = await api.patch('/profile/avatar', formData, {
-      headers: {
-        Cookie: cookieStore.toString(),
+    if (!(file instanceof File)) {
+      return Response.json(
+        {
+          message: 'Avatar file is required',
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    const formData = new FormData();
+
+    formData.append(
+      'avatar',
+      file,
+      file.name,
+    );
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/profile/avatar`,
+      {
+        method: 'PATCH',
+        body: formData,
+        headers: {
+          cookie: req.headers.get('cookie') ?? '',
+        },
       },
-      // НЕ вказуємо Content-Type! Axios сам правильно поставить multipart
+    );
+
+    const data = await response.text();
+
+    return new Response(data, {
+      status: response.status,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
-    return NextResponse.json(data);
-  } catch (error: any) {
-    console.error('[Avatar Upload Error]:', error.response?.data || error);
+  } catch (error) {
+    console.error(
+      'Avatar upload failed:',
+      error,
+    );
 
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      'Не вдалося оновити аватар';
-
-    return NextResponse.json(
-      { message },
-      { status: error.response?.status || 500 },
+    return Response.json(
+      {
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Avatar upload failed',
+      },
+      {
+        status: 500,
+      },
     );
   }
 }
