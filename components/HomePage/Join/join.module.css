@@ -65,16 +65,6 @@
     background-color: #357a3e;
 }
 
-@media (min-width: 375px) {
-    .container {
-        padding: 32px 24px;
-    }
-
-    .title {
-        font-size: 26px;
-    }
-}
-
 
 @media (min-width: 768px) {
     .container {
@@ -91,12 +81,10 @@
 
     .title {
         font-size: 32px;
-        max-width: 80%;
     }
 
     .description {
         font-size: 16px;
-        max-width: 85%;
     }
 
     .button {
@@ -124,14 +112,13 @@
     }
 
     .title {
-        font-size: 40px;
-        max-width: 60%;
-        margin-bottom: 24px;
+        font-size: 48px;
+
     }
 
     .description {
-        font-size: 18px;
-        max-width: 55%;
+        font-size: 20px;
+
         margin-bottom: 32px;
     }
 }
