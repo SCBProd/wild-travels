@@ -5,12 +5,14 @@ import { PageTitle } from '@/components/ui/PageTitle/PageTitle';
 
 import styles from './hero.module.css';
 
+import heroImg from '@/public/Image/hero-mob.webp';
+
 export default function Hero() {
   return (
     <section className={styles.hero}>
       <div className={styles.container}>
         <div className={styles.content}>
-          <PageTitle tag="h1" class={title1}>
+          <PageTitle tag="h1" className={styles.title}>
             Відкрий Україну заново — еко-мандри для натхнення
           </PageTitle>
 
@@ -51,7 +53,7 @@ export default function Hero() {
             />
 
             <Image
-              src="/Image/hero-mob.webp"
+              src={heroImg}
               alt="Карпатські гори"
               priority
               className={styles.image}
