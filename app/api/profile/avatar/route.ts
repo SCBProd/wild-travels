@@ -1,65 +1,45 @@
 // app/api/profile/avatar/route.ts
 
-export async function PATCH(req: Request) {
+export const dynamic = 'force-dynamic';
+
+import { NextRequest, NextResponse } from 'next/server';
+import { api } from '@/app/api/api';
+import { cookies } from 'next/headers';
+
+export async function PATCH(req: NextRequest) {
   try {
-    const incomingFormData = await req.formData();
+    const cookieStore = await cookies();
 
-    const file = incomingFormData.get('avatar');
+    // дістаємо multipart/form-data
+    const formData = await req.formData();
 
-    if (!(file instanceof File)) {
-      return Response.json(
-        {
-          message: 'Avatar file is required',
-        },
-        {
-          status: 400,
-        },
-      );
-    }
-
-    const formData = new FormData();
-
-    formData.append(
-      'avatar',
-      file,
-      file.name,
-    );
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/profile/avatar`,
+    const { data } = await api.patch(
+      '/profile/avatar',
+      formData,
       {
-        method: 'PATCH',
-        body: formData,
         headers: {
-          cookie: req.headers.get('cookie') ?? '',
+          Cookie: cookieStore.toString(),
         },
       },
     );
 
-    const data = await response.text();
+    return NextResponse.json(data);
 
-    return new Response(data, {
-      status: response.status,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-  } catch (error) {
+  } catch (error: any) {
     console.error(
-      'Avatar upload failed:',
-      error,
+      '[Avatar Upload Error]:',
+      error.response?.data || error.message,
     );
 
-    return Response.json(
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      'Не вдалося оновити аватар';
+
+    return NextResponse.json(
+      { message },
       {
-        message:
-          error instanceof Error
-            ? error.message
-            : 'Avatar upload failed',
-      },
-      {
-        status: 500,
+        status: error.response?.status || 500,
       },
     );
   }
