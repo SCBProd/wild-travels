@@ -234,15 +234,11 @@ export async function unsaveStory(
   }
 }
 
-export type UpdateAvatarResponse = {
-  url: string;
-};
-
 export async function updateAvatar(
   formData: FormData,
-): Promise<UpdateAvatarResponse> {
+): Promise<{ url: string }> {
   try {
-    const response = await nextServer.patch<UpdateAvatarResponse>(
+    const response = await nextServer.patch<{ url: string }>(
       '/api/profile/avatar',
       formData,
     );
@@ -253,17 +249,13 @@ export async function updateAvatar(
       const serverMessage =
         error.response?.data?.message || error.message;
 
-      throw new Error(
-        serverMessage || 'Не вдалося оновити аватар',
-      );
+      throw new Error(serverMessage || 'Не вдалося оновити аватар');
     }
 
     if (error instanceof Error) {
       throw error;
     }
 
-    throw new Error(
-      'Щось пішло не так при оновленні аватара',
-    );
+    throw new Error('Помилка оновлення аватара');
   }
 }

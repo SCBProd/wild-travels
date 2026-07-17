@@ -1,56 +1,35 @@
-// app/api/profile/avatar/route.ts
+export const dynamic = 'force-dynamic';
 
-export async function PATCH(req: Request) {
+import { NextRequest, NextResponse } from 'next/server';
+import { api } from '../../api';
+import { cookies } from 'next/headers';
+
+export async function PATCH(req: NextRequest) {
   try {
-    const incomingFormData = await req.formData();
+    const cookieStore = await cookies();
 
-    const file = incomingFormData.get('avatarUrl');
+    // Беремо оригінальний FormData і передаємо далі БЕЗ змін
+    const formData = await req.formData();
 
-    if (!(file instanceof File)) {
-      return Response.json(
-        { message: 'Avatar file is required' },
-        { status: 400 },
-      );
-    }
-
-    const formData = new FormData();
-
-    formData.append(
-      'avatarUrl',
-      file,
-      file.name,
-    );
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/profile/avatar`,
-      {
-        method: 'PATCH',
-        body: formData,
-        headers: {
-          cookie: req.headers.get('cookie') ?? '',
-        },
-      },
-    );
-
-    const data = await response.text();
-
-    return new Response(data, {
-      status: response.status,
+    const { data } = await api.patch('/profile/avatar', formData, {
       headers: {
-        'Content-Type': 'application/json',
+        Cookie: cookieStore.toString(),
       },
+      // НЕ вказуємо Content-Type! Axios сам правильно поставить multipart
     });
 
-  } catch (error) {
-    console.error(error);
+    return NextResponse.json(data);
+  } catch (error: any) {
+    console.error('[Avatar Upload Error]:', error.response?.data || error);
 
-    return Response.json(
-      {
-        message: 'Avatar upload failed',
-      },
-      {
-        status: 500,
-      },
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      'Не вдалося оновити аватар';
+
+    return NextResponse.json(
+      { message },
+      { status: error.response?.status || 500 },
     );
   }
 }
