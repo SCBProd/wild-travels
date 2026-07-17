@@ -59,7 +59,6 @@
 
 @media screen and (min-width: 768px) {
     .hero {
-        /* flex-direction: column; */
         padding: 64px 0;
     }
 
@@ -87,7 +86,7 @@
 
     .content {
 
-        max-width: 480px;
+        max-width: 640px;
     }
 
     .image {
