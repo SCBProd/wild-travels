@@ -3,15 +3,31 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { api } from '@/app/api/api';
+import { api } from '../../../api/api';
 import { cookies } from 'next/headers';
 
 export async function PATCH(req: NextRequest) {
   try {
     const cookieStore = await cookies();
 
-    // дістаємо multipart/form-data
-    const formData = await req.formData();
+    const incomingFormData = await req.formData();
+
+    const file = incomingFormData.get('avatarUrl');
+
+    if (!(file instanceof File)) {
+      return NextResponse.json(
+        { message: 'Avatar file is required' },
+        { status: 400 },
+      );
+    }
+
+    const formData = new FormData();
+
+    formData.append(
+      'avatarUrl',
+      file,
+      file.name,
+    );
 
     const { data } = await api.patch(
       '/profile/avatar',
@@ -25,21 +41,31 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json(data);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const apiError = error as {
+      response?: {
+        data?: {
+          message?: string;
+        };
+        status?: number;
+      };
+      message?: string;
+    };
+
     console.error(
       '[Avatar Upload Error]:',
-      error.response?.data || error.message,
+      apiError.response?.data || apiError.message,
     );
 
-    const message =
-      error.response?.data?.message ||
-      error.message ||
-      'Не вдалося оновити аватар';
-
     return NextResponse.json(
-      { message },
       {
-        status: error.response?.status || 500,
+        message:
+          apiError.response?.data?.message ||
+          apiError.message ||
+          'Не вдалося оновити аватар',
+      },
+      {
+        status: apiError.response?.status || 500,
       },
     );
   }
