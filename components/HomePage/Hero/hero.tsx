@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import PageTitle from '../PageTitle/PageTitle';
+import { PageTitle } from '@/components/ui/PageTitle/PageTitle';
 
 import styles from './hero.module.css';
 
