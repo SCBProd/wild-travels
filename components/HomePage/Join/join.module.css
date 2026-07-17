@@ -73,16 +73,6 @@
     color: #1b391b;
 }
 
-/* @media (min-width: 375px) {
-    .content {
-        padding: 32px 24px;
-    }
-
-    .title {
-        font-size: 26px;
-    }
-} */
-
 
 @media (min-width: 768px) {
     .container {
@@ -104,12 +94,12 @@
 
     .title {
         font-size: 32px;
-        /* max-width: 80%; */
+
     }
 
     .description {
         font-size: 16px;
-        /* max-width: 85%; */
+
     }
 
     .button {
@@ -141,13 +131,12 @@
 
     .title {
         font-size: 48px;
-        /* max-width: 60%;
-        margin-bottom: 24px; */
+
     }
 
     .description {
         font-size: 20px;
-        /* max-width: 55%; */
+
         margin-bottom: 32px;
     }
 }
