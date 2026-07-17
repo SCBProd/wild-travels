@@ -12,7 +12,7 @@ export default function Hero() {
     <section className={styles.hero}>
       <div className={styles.container}>
         <div className={styles.content}>
-          <PageTitle tag="h1" className={styles.title}>
+          <PageTitle tag="h1" className={styles.title1}>
             Відкрий Україну заново — еко-мандри для натхнення
           </PageTitle>
 

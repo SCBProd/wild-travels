@@ -1,4 +1,4 @@
-.title {
+.title1 {
   font-size: 32px;
   font-weight: 700;
   line-height: 1.1;
@@ -52,4 +52,12 @@ h3.title {
   h3.title {
     font-size: 26px;
   }
+}
+
+.title1 {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #1b391b;
+  text-align: left;
 }
