@@ -38,7 +38,7 @@ export default function TravellerPublicProfile({
     const formData = new FormData();
 
     formData.append(
-      'avatar',
+      'avatarUrl',
       file,
     );
 
