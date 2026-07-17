@@ -29,9 +29,7 @@ export async function PATCH(req: Request) {
       `${process.env.NEXT_PUBLIC_API_URL}/api/profile/avatar`,
       {
         method: 'PATCH',
-
         body: formData,
-
         headers: {
           cookie: req.headers.get('cookie') ?? '',
         },
@@ -40,16 +38,12 @@ export async function PATCH(req: Request) {
 
     const data = await response.text();
 
-    return new Response(
-      data,
-      {
-        status: response.status,
-
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    return new Response(data, {
+      status: response.status,
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+    });
 
   } catch (error) {
     console.error(
@@ -59,7 +53,10 @@ export async function PATCH(req: Request) {
 
     return Response.json(
       {
-        message: 'Avatar upload failed',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Avatar upload failed',
       },
       {
         status: 500,
